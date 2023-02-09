@@ -31,7 +31,7 @@ Exposition des différentes fonctionnalités sur une API REST(Spring par ex.)
 Implémentation d'un adapteur de persistence de votre choix (SQLlite, H2, ...).
 
 
-## ⚠️ MVP ⚠️
+## ⚠️ Candidatures ⚠️
 
 >Le kata a volontairement un scope très large : il a vocation à être affiné tout au long de votre montée en compétence chez Exalt. Pour une candidature cependant, concentrez-vous sur **l’implémentation d’un domaine métier complet**, testé, et accessible depuis **une API Rest** ou à minima une CLI. 
 
