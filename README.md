@@ -35,7 +35,7 @@ Implémentation d'un adapteur de persistence de votre choix (SQLlite, H2, ...).
 
 >Le kata a volontairement un scope très large : il a vocation à être affiné tout au long de votre montée en compétence chez Exalt. Pour une candidature cependant, concentrez-vous sur **l’implémentation d’un domaine métier complet**, testé, et accessible depuis **une API Rest** ou à minima une CLI. 
 
-> **Pour le rendu, Poussez sur une nouvelle branche git et ouvrez une merge request vers Main**
+> **Pour le rendu, Poussez sur une nouvelle branche git, ouvrez une merge request vers Main, et notifiez votre interlocuteur par message que le kata est fini.**
 
 ## Bonne chance !
 
