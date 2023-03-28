@@ -24,18 +24,18 @@ Proposer une modélisation objet adaptée des entités necéssaires à ces fonct
 
 ### Etape 2 - Adapteur API
 
-Exposition des différentes fonctionnalités sur une API REST(Spring par ex.)
+Exposition des différentes fonctionnalités sur une API REST _(ex: Java -> Spring, .NET -> ASP.NET)_
 
 ### Etape 3 - Adapteur de Persistence
 
-Implémentation d'un adapteur de persistence de votre choix (SQLlite, H2, ...).
+Implémentation d'un adapteur de persistence de votre choix _(ex: SQLlite, H2, ...)_.
 
 
 ## ⚠️ Modalités de candidatures ⚠️
 
->Le kata a volontairement un scope très large : il a vocation à être affiné tout au long de votre montée en compétence chez Exalt. Pour une candidature cependant, concentrez-vous sur **l’implémentation d’un domaine métier complet**, testé, et accessible depuis **une API Rest** ou à minima une CLI. 
+>Le kata a volontairement un scope très large : il a vocation à être affiné tout au long de votre montée en compétence chez Exalt. Pour une candidature cependant, concentrez-vous sur **l’implémentation d’un domaine métier complet**, testé, et accessible depuis **une API Rest ou une interface graphique**.
 
-> **Pour le rendu, Poussez sur une nouvelle branche git, ouvrez une merge request vers Main, et notifiez votre interlocuteur par message que le kata est fini.**
+> **Pour le rendu, Poussez sur une branche git, ouvrez une merge request vers Main, et notifiez votre interlocuteur par message que le kata est fini.**
 
 ## Bonne chance !
 
