@@ -7,8 +7,8 @@ class ViewPreviousTransactionsUseCase(private val accountRepository: AccountRepo
     ViewPreviousTransactionsInput {
 
     override fun getPreviousTransactions(accountId: Long): LinkedHashMap<Int, Double> {
-        /** TODO */
+        val account = accountRepository.findById(accountId)?: throw IllegalArgumentException("Account not found")
 
-        return LinkedHashMap()
+        return account.mapTransactions
     }
 }

@@ -6,8 +6,8 @@ import com.example.bankAccount.application.ports.out.AccountRepository
 class ViewBalanceUseCase(private val accountRepository: AccountRepository) : ViewBalanceInput {
 
     override fun getBalance(accountId: Long): Double? {
-        /** TODO */
+        val account = accountRepository.findById(accountId)?: throw IllegalArgumentException("Account not found")
 
-        return 0.0
+        return account.balance
     }
 }
