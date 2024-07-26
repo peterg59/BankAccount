@@ -1,13 +1,13 @@
 package com.example.bankAccount.application.adapters
 
-import com.example.bankAccount.adapters.AccountRepositoryImpl
+import com.example.bankAccount.adapters.SpringDataAccountRepository
 import org.junit.jupiter.api.Test
 import com.example.bankAccount.domain.Account
 import kotlin.test.*
 
-class AccountRepositoryImplTest {
+class SpringDataAccountRepositoryTest {
 
-    private val accountRepository = AccountRepositoryImpl()
+    private val accountRepository = SpringDataAccountRepository()
     private val account = Account(
         id = 1,
         firstName = "Pierre",

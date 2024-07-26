@@ -1,6 +1,12 @@
 package com.example.bankAccount.domain
 
-data class Account(val id: Long, val firstName: String, val lastName: String,
-                   var balance: Double, var mapTransactions: LinkedHashMap<Int, Double>) {
+import jakarta.persistence.*
+
+@Entity
+data class Account(@Id
+                   @GeneratedValue(strategy = GenerationType.AUTO)
+                   val id: Long
+                   , val firstName: String, val lastName: String, var balance: Double
+                   , var mapTransactions: LinkedHashMap<Int, Double>) {
 
 }

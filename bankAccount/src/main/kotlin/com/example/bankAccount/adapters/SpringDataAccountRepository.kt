@@ -2,8 +2,10 @@ package com.example.bankAccount.adapters
 
 import com.example.bankAccount.application.ports.out.AccountRepository
 import com.example.bankAccount.domain.Account
+import org.springframework.stereotype.Repository
 
-class AccountRepositoryImpl : AccountRepository {
+@Repository
+class SpringDataAccountRepository : AccountRepository {
     private val mapAccounts = mutableMapOf<Long, Account>()
 
     override fun findById(accountId: Long): Account? {
@@ -17,5 +19,10 @@ class AccountRepositoryImpl : AccountRepository {
 
     override fun delete(accountId: Long) {
         mapAccounts.remove(accountId)
+    }
+
+    override fun findAll(): List<Account> {
+        val list = ArrayList<Account>()
+        return list
     }
 }
