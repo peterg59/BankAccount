@@ -3,7 +3,7 @@ package com.example.bankAccount.adapters
 import com.example.bankAccount.application.ports.out.AccountRepository
 import com.example.bankAccount.domain.Account
 
-class AccountRepositoryImpl : AccountRepository {
+class InMemoryAccountRepository : AccountRepository {
     private val mapAccounts = mutableMapOf<Long, Account>()
 
     override fun findById(accountId: Long): Account? {
