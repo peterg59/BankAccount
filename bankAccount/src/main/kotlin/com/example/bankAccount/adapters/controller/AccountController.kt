@@ -20,13 +20,13 @@ class AccountController(
         return ResponseEntity.ok().build()
     }
 
-    @RequestMapping(method = [RequestMethod.POST], value = ["/account/{id}/withdraw"])
+    @RequestMapping(method = [RequestMethod.POST], value = ["/accounts/{id}/withdraw"])
     fun withdrawMoney(@PathVariable id: Long, @RequestBody withdrawMoneyRequest: WithdrawMoneyRequest): ResponseEntity<Void> {
         withdrawMoneyUseCase.withdrawMoney(id, withdrawMoneyRequest.amount)
         return ResponseEntity.ok().build()
     }
 
-    @RequestMapping(method = [RequestMethod.GET], value = ["/account/{id}/balance"])
+    @RequestMapping(method = [RequestMethod.GET], value = ["/accounts/{id}/balance"])
     fun viewBalance(@PathVariable id: Long): ResponseEntity<ViewBalanceResponse> {
         val balance = viewBalanceUseCase.getBalance(id)
         return if(balance != null)
@@ -35,7 +35,7 @@ class AccountController(
             ResponseEntity.notFound().build()
     }
 
-    @RequestMapping(method = [RequestMethod.GET], value = ["/account/{id}/previousTransactions"])
+    @RequestMapping(method = [RequestMethod.GET], value = ["/accounts/{id}/previousTransactions"])
     fun viewPreviousTransactions(@PathVariable id: Long): ResponseEntity<ViewPreviousTransactionsResponse> {
         val previousTransactions = viewPreviousTransactionsUseCase.getPreviousTransactions(id)
         return if(previousTransactions != null)
