@@ -2,7 +2,9 @@ package com.example.bankAccount.application.usecases
 
 import com.example.bankAccount.application.ports.`in`.WithdrawMoneyInput
 import com.example.bankAccount.application.ports.out.AccountRepository
+import org.springframework.stereotype.Service
 
+@Service
 class WithdrawMoneyUseCase(private val accountRepository: AccountRepository) : WithdrawMoneyInput {
 
     override fun withdrawMoney(accountId: Long, amount: Double) {
