@@ -1,13 +1,12 @@
-package com.example.bankAccount.application.adapters
+package com.example.bankAccount.adapters.repository
 
-import com.example.bankAccount.adapters.InMemoryAccountRepository
 import org.junit.jupiter.api.Test
 import com.example.bankAccount.domain.Account
 import kotlin.test.*
 
-class InMemoryAccountRepositoryTest {
+class SpringDataAccountRepositoryTest {
 
-    private val accountRepository = InMemoryAccountRepository()
+    private val accountRepository = SpringDataAccountRepository()
     private val account = Account(
         id = 1,
         firstName = "Pierre",
