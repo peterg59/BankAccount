@@ -1,6 +1,6 @@
 package com.example.bankAccount.application.adapters
 
-import com.example.bankAccount.adapters.SpringDataAccountRepository
+import com.example.bankAccount.adapters.repository.SpringDataAccountRepository
 import org.junit.jupiter.api.Test
 import com.example.bankAccount.domain.Account
 import kotlin.test.*

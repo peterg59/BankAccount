@@ -1,4 +1,4 @@
-package com.example.bankAccount.adapters
+package com.example.bankAccount.adapters.repository
 
 import com.example.bankAccount.application.ports.out.AccountRepository
 import com.example.bankAccount.domain.Account
@@ -19,10 +19,5 @@ class SpringDataAccountRepository : AccountRepository {
 
     override fun delete(accountId: Long) {
         mapAccounts.remove(accountId)
-    }
-
-    override fun findAll(): List<Account> {
-        val list = ArrayList<Account>()
-        return list
     }
 }

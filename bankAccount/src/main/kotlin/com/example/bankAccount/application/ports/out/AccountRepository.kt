@@ -8,5 +8,4 @@ interface AccountRepository {
     fun findById(accountId: Long): Account?
     fun save(account: Account)
     fun delete(accountId: Long)
-    fun findAll(): List<Account>
 }
