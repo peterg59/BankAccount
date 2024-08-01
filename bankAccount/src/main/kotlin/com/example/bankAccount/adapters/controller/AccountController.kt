@@ -14,7 +14,7 @@ class AccountController(
     private val viewBalanceUseCase: ViewBalanceUseCase,
     private val viewPreviousTransactionsUseCase: ViewPreviousTransactionsUseCase) {
 
-    @RequestMapping(method = [RequestMethod.POST], value = ["/account/{id}/deposit"])
+    @RequestMapping(method = [RequestMethod.POST], value = ["/accounts/{id}/deposit"])
     fun depositMoney(@PathVariable id: Long, @RequestBody depositMoneyRequest: DepositMoneyRequest ): ResponseEntity<Void> {
         depositMoneyUseCase.depositMoney(id, depositMoneyRequest.amount)
         return ResponseEntity.ok().build()
