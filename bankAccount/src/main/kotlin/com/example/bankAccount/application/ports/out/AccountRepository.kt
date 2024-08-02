@@ -1,6 +1,6 @@
 package com.example.bankAccount.application.ports.out
 
-import com.example.bankAccount.domain.Account
+import com.example.bankAccount.model.Account
 import org.springframework.stereotype.Repository
 
 @Repository

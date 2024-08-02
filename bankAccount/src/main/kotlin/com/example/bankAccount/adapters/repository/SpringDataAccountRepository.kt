@@ -1,7 +1,7 @@
 package com.example.bankAccount.adapters.repository
 
 import com.example.bankAccount.application.ports.out.AccountRepository
-import com.example.bankAccount.domain.Account
+import com.example.bankAccount.model.Account
 import org.springframework.stereotype.Repository
 
 @Repository
