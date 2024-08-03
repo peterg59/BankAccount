@@ -1,7 +1,7 @@
 package com.example.bankAccount.adapters.repository
 
 import org.junit.jupiter.api.Test
-import com.example.bankAccount.domain.Account
+import com.example.bankAccount.model.Account
 import kotlin.test.*
 
 class SpringDataAccountRepositoryTest {

@@ -1,4 +1,4 @@
-package com.example.bankAccount.domain
+package com.example.bankAccount.model
 
 import jakarta.persistence.*
 

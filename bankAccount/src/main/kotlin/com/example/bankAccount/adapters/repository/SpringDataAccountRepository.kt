@@ -1,12 +1,16 @@
 package com.example.bankAccount.adapters.repository
 
 import com.example.bankAccount.application.ports.out.AccountRepository
-import com.example.bankAccount.domain.Account
+import com.example.bankAccount.model.Account
 import org.springframework.stereotype.Repository
 
 @Repository
 class SpringDataAccountRepository : AccountRepository {
     private val mapAccounts = mutableMapOf<Long, Account>()
+
+    override fun findAll(): List<Account> {
+        return mapAccounts.values.toList()
+    }
 
     override fun findById(accountId: Long): Account? {
         return mapAccounts[accountId]
