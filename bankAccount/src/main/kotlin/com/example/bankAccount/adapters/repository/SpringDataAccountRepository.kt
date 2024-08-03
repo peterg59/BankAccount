@@ -8,6 +8,10 @@ import org.springframework.stereotype.Repository
 class SpringDataAccountRepository : AccountRepository {
     private val mapAccounts = mutableMapOf<Long, Account>()
 
+    override fun findAll(): List<Account> {
+        return mapAccounts.values.toList()
+    }
+
     override fun findById(accountId: Long): Account? {
         return mapAccounts[accountId]
     }
