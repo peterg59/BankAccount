@@ -1,7 +1,7 @@
 package com.example.bankAccount.application.usecases
 
 import com.example.bankAccount.application.ports.out.AccountRepository
-import com.example.bankAccount.domain.Account
+import com.example.bankAccount.model.Account
 import io.mockk.*
 import org.junit.jupiter.api.Test
 import kotlin.test.*
