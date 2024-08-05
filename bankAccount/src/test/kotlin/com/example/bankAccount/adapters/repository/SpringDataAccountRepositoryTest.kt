@@ -1,12 +1,12 @@
 package com.example.bankAccount.adapters.repository
 
 import org.junit.jupiter.api.Test
-import com.example.bankAccount.model.Account
+import com.example.bankAccount.domain.model.Account
 import kotlin.test.*
 
 class SpringDataAccountRepositoryTest {
 
-    private val accountRepository = SpringDataAccountRepository()
+    private val inMemoryAccountRepository = InMemoryAccountRepository()
     private val account = Account(
         id = 1,
         firstName = "Pierre",
@@ -18,8 +18,8 @@ class SpringDataAccountRepositoryTest {
     @Test
     fun testCreateAccount() {
 
-        accountRepository.save(account)
-        val accountCreated = accountRepository.findById(account.id)
+        inMemoryAccountRepository.save(account)
+        val accountCreated = inMemoryAccountRepository.findById(account.id)
         assertEquals(account, accountCreated)
 
     }
@@ -28,13 +28,13 @@ class SpringDataAccountRepositoryTest {
     fun testDeleteAccount() {
 
         // We create an account first
-        accountRepository.save(account)
-        val accountCreated = accountRepository.findById(1)
+        inMemoryAccountRepository.save(account)
+        val accountCreated = inMemoryAccountRepository.findById(1)
         assertEquals(account, accountCreated)
 
         // Then we delete it
-        accountRepository.delete(account.id)
-        val accountDeleted = accountRepository.findById(1)
+        inMemoryAccountRepository.delete(account.id)
+        val accountDeleted = inMemoryAccountRepository.findById(1)
         assertNull(accountDeleted)
 
     }

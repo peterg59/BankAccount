@@ -1,11 +1,11 @@
 package com.example.bankAccount.application.usecases
 
-import com.example.bankAccount.application.ports.`in`.ViewPreviousTransactionsInput
-import com.example.bankAccount.application.ports.out.AccountRepository
+import com.example.bankAccount.domain.ports.`in`.ViewPreviousTransactionsInput
+import com.example.bankAccount.domain.ports.out.AccountRepository
 import org.springframework.stereotype.Service
 
 @Service
-class ViewPreviousTransactionsUseCase(private val accountRepository: AccountRepository) :
+open class ViewPreviousTransactionsUseCase(private val accountRepository: AccountRepository) :
     ViewPreviousTransactionsInput {
 
     override fun getPreviousTransactions(accountId: Long): LinkedHashMap<Int, Double> {

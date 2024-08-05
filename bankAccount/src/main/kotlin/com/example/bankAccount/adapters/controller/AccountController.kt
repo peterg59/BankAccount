@@ -1,9 +1,9 @@
 package com.example.bankAccount.adapters.controller
 
-import com.example.bankAccount.application.usecases.DepositMoneyUseCase
-import com.example.bankAccount.application.usecases.ViewBalanceUseCase
-import com.example.bankAccount.application.usecases.ViewPreviousTransactionsUseCase
-import com.example.bankAccount.application.usecases.WithdrawMoneyUseCase
+import com.example.bankAccount.adapters.dto.*
+import com.example.bankAccount.adapters.service.SpringDataAccountService
+import com.example.bankAccount.application.usecases.*
+import com.example.bankAccount.domain.model.Account
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
@@ -12,7 +12,51 @@ class AccountController(
     private val depositMoneyUseCase: DepositMoneyUseCase,
     private val withdrawMoneyUseCase: WithdrawMoneyUseCase,
     private val viewBalanceUseCase: ViewBalanceUseCase,
-    private val viewPreviousTransactionsUseCase: ViewPreviousTransactionsUseCase) {
+    private val viewPreviousTransactionsUseCase: ViewPreviousTransactionsUseCase,
+    private val springDataAccountService: SpringDataAccountService
+) {
+
+    @RequestMapping(method = [RequestMethod.GET], value = ["/accounts"])
+    fun getAccounts(): ResponseEntity<List<Account>> {
+        val accounts = springDataAccountService.findAll()
+        return ResponseEntity.ok(accounts)
+    }
+
+    @RequestMapping(method = [RequestMethod.GET], value = ["/accounts/{id}"])
+    fun getAccount(@PathVariable id: Long): ResponseEntity<Account>{
+        val account = springDataAccountService.findById(id)
+        return if (account != null) {
+            ResponseEntity.ok(account)
+        } else {
+            ResponseEntity.notFound().build()
+        }
+    }
+
+    @RequestMapping(method = [RequestMethod.POST], value = ["/accounts"])
+    fun addAccount(@RequestBody account: Account): ResponseEntity<Void> {
+        springDataAccountService.save(account)
+        return ResponseEntity.ok().build()
+    }
+
+    @RequestMapping(method = [RequestMethod.PUT], value = ["/accounts/{id}"])
+    fun updateAccount(@RequestBody account: Account, @PathVariable id: Long): ResponseEntity<Void> {
+        val accountInDB = springDataAccountService.findById(id)
+
+        if(accountInDB != null){
+            if(account.firstName != null)
+                accountInDB.firstName = account.firstName
+            if(account.lastName != null)
+                accountInDB.lastName = account.lastName
+
+            accountInDB.balance = account.balance
+
+            if(account.mapTransactions != null)
+                accountInDB.mapTransactions = account.mapTransactions
+
+            springDataAccountService.save(accountInDB)
+        }
+        return ResponseEntity.ok().build()
+    }
 
     @RequestMapping(method = [RequestMethod.POST], value = ["/accounts/{id}/deposit"])
     fun depositMoney(@PathVariable id: Long, @RequestBody depositMoneyRequest: DepositMoneyRequest ): ResponseEntity<Void> {
@@ -44,8 +88,9 @@ class AccountController(
             ResponseEntity.notFound().build()
     }
 
-    data class ViewPreviousTransactionsResponse(var mapTransactions: LinkedHashMap<Int, Double>)
-    data class ViewBalanceResponse(var balance: Double)
-    data class DepositMoneyRequest(val accountId: Long, val amount: Double)
-    data class WithdrawMoneyRequest(val accountId: Long, val amount: Double)
+    @RequestMapping(method = [RequestMethod.DELETE], value = ["/accounts/{id}"])
+    fun deleteAccount(@PathVariable id: Long): ResponseEntity<Void> {
+        springDataAccountService.delete(id)
+        return ResponseEntity.ok().build()
+    }
 }

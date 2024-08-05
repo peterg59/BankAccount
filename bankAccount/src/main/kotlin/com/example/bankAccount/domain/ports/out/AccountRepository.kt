@@ -1,6 +1,6 @@
-package com.example.bankAccount.application.ports.out
+package com.example.bankAccount.domain.ports.out
 
-import com.example.bankAccount.model.Account
+import com.example.bankAccount.domain.model.Account
 
 interface AccountRepository {
     fun findAll(): List<Account>
