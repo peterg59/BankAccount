@@ -7,5 +7,9 @@ import jakarta.persistence.*
 data class AccountEntity(@Id
                     @GeneratedValue(strategy = GenerationType.AUTO)
                     val id: Long
-                    , val firstName: String, val lastName: String, var balance: Double
-                    , var mapTransactions: LinkedHashMap<Int, Double>)
+                    , var firstName: String, var lastName: String, var balance: Double
+                    , var mapTransactions: LinkedHashMap<Int, Double>) {
+
+    // Constructeur par défaut requis par JPA
+    constructor() : this(0, "", "", 0.0, linkedMapOf())
+}

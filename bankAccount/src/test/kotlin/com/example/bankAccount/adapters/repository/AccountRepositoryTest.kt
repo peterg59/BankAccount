@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test
 import com.example.bankAccount.domain.model.Account
 import kotlin.test.*
 
-class SpringDataAccountRepositoryTest {
+class AccountRepositoryTest {
 
     private val inMemoryAccountRepository = InMemoryAccountRepository()
     private val account = Account(
