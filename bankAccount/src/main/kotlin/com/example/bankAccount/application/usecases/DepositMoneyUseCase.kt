@@ -17,10 +17,10 @@ open class DepositMoneyUseCase(private val accountRepository: AccountRepository)
         }
 
         // Update the balance with the amount deposited
-        val accountCopy = account.copy(balance = account.balance.add(amount))
+        val updatedAccount = account.copy(balance = account.balance.add(amount))
 
         // Update the list of transactions
-        accountCopy.transactions.add(amount)
-        accountRepository.save(accountCopy)
+        updatedAccount.transactions.add(amount)
+        accountRepository.save(updatedAccount)
     }
 }

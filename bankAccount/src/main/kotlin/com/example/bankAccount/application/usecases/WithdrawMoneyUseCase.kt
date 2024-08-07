@@ -22,10 +22,10 @@ open class WithdrawMoneyUseCase(private val accountRepository: AccountRepository
         }
 
         // Update the balance with the amount withdrawal
-        val accountCopy = account.copy(balance = account.balance.subtract(amount))
+        val updatedAccount = account.copy(balance = account.balance.subtract(amount))
 
         // Update the list of transactions
-        accountCopy.transactions.add(amount.negate())
-        accountRepository.save(accountCopy)
+        updatedAccount.transactions.add(amount.negate())
+        accountRepository.save(updatedAccount)
     }
 }
