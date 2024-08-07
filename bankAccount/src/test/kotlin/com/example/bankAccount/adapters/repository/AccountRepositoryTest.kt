@@ -2,6 +2,7 @@ package com.example.bankAccount.adapters.repository
 
 import org.junit.jupiter.api.Test
 import com.example.bankAccount.domain.model.Account
+import java.math.BigDecimal
 import kotlin.test.*
 
 class AccountRepositoryTest {
@@ -11,8 +12,8 @@ class AccountRepositoryTest {
         id = 1,
         firstName = "Pierre",
         lastName = "Guyard",
-        balance = 500.0,
-        mapTransactions = linkedMapOf(1 to 50.0, 2 to 20.0, 3 to -15.0)
+        balance = BigDecimal(500),
+        transactions = mutableListOf(BigDecimal(50), BigDecimal(20), BigDecimal(-15))
     )
 
     @Test

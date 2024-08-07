@@ -1,5 +1,11 @@
 package com.example.bankAccount.domain.model
 
-data class Account(val id: Long
-                   , var firstName: String, var lastName: String, var balance: Double
-                   , var mapTransactions: LinkedHashMap<Int, Double>)
+import java.math.BigDecimal
+
+data class Account(
+    val id: Long,
+    val firstName: String,
+    val lastName: String,
+    val balance: BigDecimal,
+    val transactions: MutableList<BigDecimal>
+)

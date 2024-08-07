@@ -2,34 +2,33 @@ package com.example.bankAccount.application.usecases
 
 import com.example.bankAccount.domain.ports.out.AccountRepository
 import com.example.bankAccount.domain.model.Account
-import com.example.bankAccount.application.usecases.DepositMoneyUseCase
 import io.mockk.*
 import org.junit.jupiter.api.Test
+import java.math.BigDecimal
 import kotlin.test.*
 
-class DepositMoneyUseCaseTest { 
+class DepositMoneyUseCaseTest {
 
     private val accountRepository = mockk<AccountRepository>()
     private val depositMoneyUseCase = DepositMoneyUseCase(accountRepository)
+    private val account = Account(
+        id = 1,
+        firstName = "Pierre",
+        lastName = "Guyard",
+        balance = BigDecimal(500),
+        transactions = mutableListOf(BigDecimal(50), BigDecimal(20), BigDecimal(-15))
+    )
 
     @Test
     fun testDepositMoney() {
 
-        val account = Account(
-            id = 1,
-            firstName = "Pierre",
-            lastName = "Guyard",
-            balance = 500.0,
-            mapTransactions = linkedMapOf(1 to 50.0, 2 to 20.0, 3 to -15.0)
-        )
-
         every { accountRepository.findById(1) } returns account
         every { accountRepository.save(any()) } just Runs
 
-        depositMoneyUseCase.depositMoney(1, 50.0)
-        verify { accountRepository.save(account)}
+        depositMoneyUseCase.depositMoney(1, BigDecimal(50))
+        verify { accountRepository.save(account) }
 
-        assertEquals(550.0, account.balance)
+        assertEquals(BigDecimal(550), account.balance)
     }
 
     @Test
@@ -38,26 +37,18 @@ class DepositMoneyUseCaseTest {
         every { accountRepository.findById(1) } returns null
 
         assertFailsWith<IllegalArgumentException> {
-            depositMoneyUseCase.depositMoney(1, 50.0)
+            depositMoneyUseCase.depositMoney(1, BigDecimal(50))
         }
     }
 
     @Test
-    fun testIfInvalidAmountToDepositThrowException () {
-
-        val account = Account(
-            id = 1,
-            firstName = "Pierre",
-            lastName = "Guyard",
-            balance = 500.0,
-            mapTransactions = linkedMapOf(1 to 50.0, 2 to 20.0, 3 to -15.0)
-        )
+    fun testIfInvalidAmountToDepositThrowException() {
 
         every { accountRepository.findById(1) } returns account
         every { accountRepository.save(any()) } just Runs
 
         assertFailsWith<IllegalArgumentException> {
-            depositMoneyUseCase.depositMoney(1, 0.0)
+            depositMoneyUseCase.depositMoney(1, BigDecimal.ZERO)
         }
     }
 }

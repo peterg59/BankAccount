@@ -7,7 +7,8 @@ import com.example.bankAccount.domain.ports.out.AccountRepository
 import org.springframework.stereotype.Service
 
 @Service
-class SpringDataAccountService(private val springDataAccountRepository: SpringDataAccountRepository) : AccountRepository {
+class SpringDataAccountService(private val springDataAccountRepository: SpringDataAccountRepository) :
+    AccountRepository {
 
     override fun findAll(): List<Account> {
         val accountList = springDataAccountRepository.findAll().map { accountEntity -> accountEntity.toDomain() }
@@ -28,3 +29,6 @@ class SpringDataAccountService(private val springDataAccountRepository: SpringDa
         springDataAccountRepository.deleteById(accountId)
     }
 }
+
+private fun AccountEntity.toDomain() = Account(id, firstName, lastName, balance, transactions)
+private fun Account.toEntity() = AccountEntity(id, firstName, lastName, balance, transactions)

@@ -2,9 +2,9 @@ package com.example.bankAccount.application.usecases
 
 import com.example.bankAccount.domain.ports.out.AccountRepository
 import com.example.bankAccount.domain.model.Account
-import com.example.bankAccount.application.usecases.ViewBalanceUseCase
 import io.mockk.*
 import org.junit.jupiter.api.Test
+import java.math.BigDecimal
 import kotlin.test.*
 
 class ViewBalanceUseCaseTest {
@@ -19,16 +19,16 @@ class ViewBalanceUseCaseTest {
             id = 1,
             firstName = "Pierre",
             lastName = "Guyard",
-            balance = 500.0,
-            mapTransactions = linkedMapOf(1 to 50.0, 2 to 20.0, 3 to -15.0)
+            balance = BigDecimal(500),
+            transactions = mutableListOf(BigDecimal(50), BigDecimal(20), BigDecimal(-15))
         )
 
         every { accountRepository.findById(1) } returns account
         every { accountRepository.save(any()) } just Runs
 
-        var balance = viewBalanceUseCase.getBalance(1)
+        val balance = viewBalanceUseCase.getBalance(1)
 
-        assertEquals(500.0, balance)
+        assertEquals(BigDecimal(500), balance)
     }
 
     @Test

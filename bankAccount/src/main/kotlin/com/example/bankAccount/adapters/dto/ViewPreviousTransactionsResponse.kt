@@ -1,3 +1,5 @@
 package com.example.bankAccount.adapters.dto
 
-data class ViewPreviousTransactionsResponse(var mapTransactions: LinkedHashMap<Int, Double>)
+import java.math.BigDecimal
+
+data class ViewPreviousTransactionsResponse(val mapTransactions: List<BigDecimal>)

@@ -3,24 +3,24 @@ package com.example.bankAccount.application.usecases
 import com.example.bankAccount.domain.ports.`in`.DepositMoneyInput
 import com.example.bankAccount.domain.ports.out.AccountRepository
 import org.springframework.stereotype.Service
+import java.math.BigDecimal
 
 @Service
 open class DepositMoneyUseCase(private val accountRepository: AccountRepository) : DepositMoneyInput {
 
-    override fun depositMoney(accountId: Long, amount: Double) {
+    override fun depositMoney(accountId: Long, amount: BigDecimal) {
 
-        val account = accountRepository.findById(accountId)?: throw IllegalArgumentException("Account not found")
+        val account = accountRepository.findById(accountId) ?: throw IllegalArgumentException("Account not found")
 
-        if(amount <= 0) {
+        if (amount <= BigDecimal.ZERO) {
             throw IllegalArgumentException("Invalid amount to deposit")
         }
 
         // Update the balance with the amount deposited
-        account.balance += amount
+        val accountCopy = account.copy(balance = account.balance.add(amount))
 
-        // Update the map of transactions
-        var lastKey = account.mapTransactions.keys.last()
-        account.mapTransactions[++lastKey] = amount
-        accountRepository.save(account)
+        // Update the list of transactions
+        accountCopy.transactions.add(amount)
+        accountRepository.save(accountCopy)
     }
 }

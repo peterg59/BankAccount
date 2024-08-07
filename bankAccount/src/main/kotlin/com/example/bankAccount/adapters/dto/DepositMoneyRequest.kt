@@ -1,3 +1,5 @@
 package com.example.bankAccount.adapters.dto
 
-data class DepositMoneyRequest(val accountId: Long, val amount: Double)
+import java.math.BigDecimal
+
+data class DepositMoneyRequest(val accountId: Long, val amount: BigDecimal)
