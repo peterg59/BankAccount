@@ -51,8 +51,8 @@ class ViewPreviousTransactionsUseCaseTest {
         every { accountRepository.findById(1) } returns account
         every { accountRepository.save(any()) } just Runs
 
-        depositMoneyUseCase.depositMoney(1, BigDecimal(50))
-        verify { accountRepository.save(account) }
+        val updatedAccount = depositMoneyUseCase.depositMoney(1, BigDecimal(50))
+        verify { accountRepository.save(updatedAccount) }
 
         val previousTransactions = viewPreviousTransactionsUseCase.getPreviousTransactions(1)
 
@@ -66,8 +66,8 @@ class ViewPreviousTransactionsUseCaseTest {
         every { accountRepository.findById(1) } returns account
         every { accountRepository.save(any()) } just Runs
 
-        withdrawMoneyUseCase.withdrawMoney(1, BigDecimal(50))
-        verify { accountRepository.save(account) }
+        val updatedAccount = withdrawMoneyUseCase.withdrawMoney(1, BigDecimal(50))
+        verify { accountRepository.save(updatedAccount) }
 
         val previousTransactions = viewPreviousTransactionsUseCase.getPreviousTransactions(1)
 

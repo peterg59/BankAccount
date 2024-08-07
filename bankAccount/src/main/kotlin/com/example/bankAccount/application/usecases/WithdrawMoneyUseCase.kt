@@ -1,5 +1,6 @@
 package com.example.bankAccount.application.usecases
 
+import com.example.bankAccount.domain.model.Account
 import com.example.bankAccount.domain.ports.`in`.WithdrawMoneyInput
 import com.example.bankAccount.domain.ports.out.AccountRepository
 import org.springframework.stereotype.Service
@@ -8,7 +9,7 @@ import java.math.BigDecimal
 @Service
 open class WithdrawMoneyUseCase(private val accountRepository: AccountRepository) : WithdrawMoneyInput {
 
-    override fun withdrawMoney(accountId: Long, amount: BigDecimal) {
+    override fun withdrawMoney(accountId: Long, amount: BigDecimal): Account {
 
         val account = accountRepository.findById(accountId) ?: throw IllegalArgumentException("Account not found")
         val currentAccountBalance = account.balance
@@ -27,5 +28,6 @@ open class WithdrawMoneyUseCase(private val accountRepository: AccountRepository
         // Update the list of transactions
         updatedAccount.transactions.add(amount.negate())
         accountRepository.save(updatedAccount)
+        return updatedAccount
     }
 }

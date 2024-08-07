@@ -25,10 +25,10 @@ class WithdrawMoneyUseCaseTest {
         every { accountRepository.findById(1) } returns account
         every { accountRepository.save(any()) } just Runs
 
-        withdrawMoneyUseCase.withdrawMoney(1, BigDecimal(50))
-        verify { accountRepository.save(account) }
+        val updatedAccount = withdrawMoneyUseCase.withdrawMoney(1, BigDecimal(50))
+        verify { accountRepository.save(updatedAccount) }
 
-        assertEquals(BigDecimal(450), account.balance)
+        assertEquals(BigDecimal(450), updatedAccount.balance)
     }
 
     @Test
