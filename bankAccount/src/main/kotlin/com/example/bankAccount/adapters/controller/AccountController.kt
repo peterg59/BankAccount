@@ -75,19 +75,13 @@ class AccountController(
     @GetMapping("/{id}/balance")
     fun viewBalance(@PathVariable id: Long): ResponseEntity<ViewBalanceResponse> {
         val balance = viewBalanceUseCase.getBalance(id)
-        return if (balance != null)
-            ResponseEntity.ok(ViewBalanceResponse(balance))
-        else
-            ResponseEntity.notFound().build()
+        return ResponseEntity.ok(ViewBalanceResponse(balance))
     }
 
     @GetMapping("/{id}/transactions")
     fun viewPreviousTransactions(@PathVariable id: Long): ResponseEntity<ViewPreviousTransactionsResponse> {
         val previousTransactions = viewPreviousTransactionsUseCase.getPreviousTransactions(id)
-        return if (previousTransactions != null)
-            ResponseEntity.ok(ViewPreviousTransactionsResponse(previousTransactions))
-        else
-            ResponseEntity.notFound().build()
+        return ResponseEntity.ok(ViewPreviousTransactionsResponse(previousTransactions))
     }
 
     @DeleteMapping("/{id}")
