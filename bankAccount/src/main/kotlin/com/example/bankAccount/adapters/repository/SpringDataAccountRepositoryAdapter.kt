@@ -6,7 +6,7 @@ import com.example.bankAccount.domain.ports.out.AccountRepository
 import org.springframework.stereotype.Repository
 
 @Repository
-class SpringDataAccountRepositoryAdapter(private val springDataAccountRepository: SpringDataAccountRepository) :
+open class SpringDataAccountRepositoryAdapter(private val springDataAccountRepository: SpringDataAccountRepository) :
     AccountRepository {
 
     override fun findAll(): List<Account> {

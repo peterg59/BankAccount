@@ -1,8 +1,6 @@
 package com.example.bankAccount.adapters.controller
 
-import com.example.bankAccount.adapters.dto.*
 import com.example.bankAccount.domain.model.Account
-import com.example.bankAccount.domain.ports.`in`.*
 import com.example.bankAccount.domain.ports.out.AccountRepository
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -10,10 +8,6 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @RequestMapping("/accounts")
 class AccountController(
-    private val depositMoneyUseCase: DepositMoneyInput,
-    private val withdrawMoneyUseCase: WithdrawMoneyInput,
-    private val viewBalanceUseCase: ViewBalanceInput,
-    private val viewPreviousTransactionsUseCase: ViewPreviousTransactionsInput,
     private val accounts: AccountRepository
 ) {
 
@@ -52,36 +46,6 @@ class AccountController(
         this.accounts.save(updatedAccount)
 
         return ResponseEntity.ok(updatedAccount)
-    }
-
-    @PostMapping("/{id}/deposit")
-    fun depositMoney(
-        @PathVariable id: Long,
-        @RequestBody depositMoneyRequest: DepositMoneyRequest
-    ): ResponseEntity<Void> {
-        depositMoneyUseCase.depositMoney(id, depositMoneyRequest.amount)
-        return ResponseEntity.ok().build()
-    }
-
-    @PostMapping("/{id}/withdrawal")
-    fun withdrawMoney(
-        @PathVariable id: Long,
-        @RequestBody withdrawMoneyRequest: WithdrawMoneyRequest
-    ): ResponseEntity<Void> {
-        withdrawMoneyUseCase.withdrawMoney(id, withdrawMoneyRequest.amount)
-        return ResponseEntity.ok().build()
-    }
-
-    @GetMapping("/{id}/balance")
-    fun viewBalance(@PathVariable id: Long): ResponseEntity<ViewBalanceResponse> {
-        val balance = viewBalanceUseCase.getBalance(id)
-        return ResponseEntity.ok(ViewBalanceResponse(balance))
-    }
-
-    @GetMapping("/{id}/transactions")
-    fun viewPreviousTransactions(@PathVariable id: Long): ResponseEntity<ViewPreviousTransactionsResponse> {
-        val previousTransactions = viewPreviousTransactionsUseCase.getPreviousTransactions(id)
-        return ResponseEntity.ok(ViewPreviousTransactionsResponse(previousTransactions))
     }
 
     @DeleteMapping("/{id}")
