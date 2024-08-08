@@ -5,4 +5,6 @@ import org.springframework.data.repository.CrudRepository
 import org.springframework.stereotype.Repository
 
 @Repository
-interface SpringDataAccountRepository : CrudRepository<AccountEntity, Long>
+interface SpringDataAccountRepository : CrudRepository<AccountEntity, Long> {
+    fun findAccountById(accountId: Long): AccountEntity?
+}

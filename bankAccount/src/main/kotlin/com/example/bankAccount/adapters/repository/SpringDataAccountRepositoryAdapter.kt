@@ -1,13 +1,12 @@
-package com.example.bankAccount.adapters.service
+package com.example.bankAccount.adapters.repository
 
 import com.example.bankAccount.adapters.persistence.*
-import com.example.bankAccount.adapters.repository.SpringDataAccountRepository
 import com.example.bankAccount.domain.model.Account
 import com.example.bankAccount.domain.ports.out.AccountRepository
-import org.springframework.stereotype.Service
+import org.springframework.stereotype.Repository
 
-@Service
-class SpringDataAccountService(private val springDataAccountRepository: SpringDataAccountRepository) :
+@Repository
+class SpringDataAccountRepositoryAdapter(private val springDataAccountRepository: SpringDataAccountRepository) :
     AccountRepository {
 
     override fun findAll(): List<Account> {
@@ -16,7 +15,7 @@ class SpringDataAccountService(private val springDataAccountRepository: SpringDa
     }
 
     override fun findById(accountId: Long): Account? {
-        val account = springDataAccountRepository.findById(accountId).orElse(null)?.toDomain()
+        val account = springDataAccountRepository.findAccountById(accountId)?.toDomain()
         return account
     }
 
