@@ -57,6 +57,16 @@
 			<version>${kotlin.version}</version>
 		</dependency>
 		<dependency>
+			<groupId>com.fasterxml.jackson.module</groupId>
+			<artifactId>jackson-module-kotlin</artifactId>
+			<version>2.17.2</version>
+		</dependency>
+		<dependency>
+			<groupId>org.iban4j</groupId>
+			<artifactId>iban4j</artifactId>
+			<version>3.2.9-RELEASE</version>
+		</dependency>
+		<dependency>
 			<groupId>org.junit.jupiter</groupId>
 			<artifactId>junit-jupiter-api</artifactId>
 			<version>${junit.jupiter.version}</version>
@@ -90,6 +100,18 @@
 			<artifactId>junit</artifactId>
 			<version>RELEASE</version>
 			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-core</artifactId>
+			<version>5.13.0</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.mockito.kotlin</groupId>
+			<artifactId>mockito-kotlin</artifactId>
+			<version>5.4.0</version>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 
@@ -152,6 +174,30 @@
 						<include>**/*Test.kt</include>
 					</includes>
 				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>kotlin-maven-plugin</artifactId>
+				<groupId>org.jetbrains.kotlin</groupId>
+				<version>${kotlin.version}</version>
+
+				<configuration>
+					<compilerPlugins>
+						<plugin>jpa</plugin>
+						<plugin>no-arg</plugin>
+					</compilerPlugins>
+
+					<pluginOptions>
+						<option>no-arg:annotation=com.my.Annotation</option>
+					</pluginOptions>
+				</configuration>
+
+				<dependencies>
+					<dependency>
+						<groupId>org.jetbrains.kotlin</groupId>
+						<artifactId>kotlin-maven-noarg</artifactId>
+						<version>${kotlin.version}</version>
+					</dependency>
+				</dependencies>
 			</plugin>
 		</plugins>
 	</build>

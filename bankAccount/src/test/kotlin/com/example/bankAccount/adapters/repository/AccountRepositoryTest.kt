@@ -1,7 +1,8 @@
 package com.example.bankAccount.adapters.repository
 
 import org.junit.jupiter.api.Test
-import com.example.bankAccount.domain.model.Account
+import com.example.bankAccount.domain.Account
+import org.iban4j.Iban
 import java.math.BigDecimal
 import kotlin.test.*
 
@@ -9,34 +10,40 @@ class AccountRepositoryTest {
 
     private val inMemoryAccountRepository = InMemoryAccountRepository()
     private val account = Account(
-        id = 1,
-        firstName = "Pierre",
-        lastName = "Guyard",
-        balance = BigDecimal(500),
-        transactions = mutableListOf(BigDecimal(50), BigDecimal(20), BigDecimal(-15))
+        iban = Iban.random().toString(),
+        firstName = "John",
+        lastName = "Doe",
+        balance = BigDecimal.ZERO,
+        transactions = ArrayList()
     )
 
     @Test
-    fun testCreateAccount() {
+    fun `Ouverture d'un compte bancaire`() {
 
-        inMemoryAccountRepository.save(account)
-        val accountCreated = inMemoryAccountRepository.findById(account.id)
-        assertEquals(account, accountCreated)
-
+        val accountOpened = inMemoryAccountRepository.openAccount(account)
+        assertEquals(account, accountOpened)
     }
 
     @Test
-    fun testDeleteAccount() {
+    fun `Consultation d'un compte bancaire`() {
 
-        // We create an account first
-        inMemoryAccountRepository.save(account)
-        val accountCreated = inMemoryAccountRepository.findById(1)
-        assertEquals(account, accountCreated)
+        // Ouverture d'un compte
+        val accountOpened = inMemoryAccountRepository.openAccount(account)
+        val accountConsulted = inMemoryAccountRepository.consultAccount(accountOpened.iban)
 
-        // Then we delete it
-        inMemoryAccountRepository.delete(account.id)
-        val accountDeleted = inMemoryAccountRepository.findById(1)
-        assertNull(accountDeleted)
+        assertEquals(account, accountConsulted)
+    }
 
+    @Test
+    fun `Fermeture d'un compte bancaire`() {
+
+        // Ouverture d'un compte
+        val accountOpened = inMemoryAccountRepository.openAccount(account)
+        assertEquals(account, accountOpened)
+
+        // Ensuite fermeture de celui-ci
+        inMemoryAccountRepository.closeAccount(accountOpened.iban)
+        val accountClosed = inMemoryAccountRepository.consultAccount(accountOpened.iban)
+        assertNull(accountClosed)
     }
 }

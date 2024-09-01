@@ -1,73 +1,104 @@
 package com.example.bankAccount.application.usecases
 
-import com.example.bankAccount.domain.ports.out.AccountRepository
-import com.example.bankAccount.domain.model.Account
+import com.example.bankAccount.domain.Account
+import com.example.bankAccount.domain.AccountRepository
+import com.example.bankAccount.domain.Operation
+import com.example.bankAccount.domain.Transaction
+import com.example.bankAccount.domain.exception.EmptyBalanceException
+import com.example.bankAccount.domain.exception.InvalidAmountToWithdrawException
+import com.example.bankAccount.domain.exception.InvalidIbanException
 import io.mockk.*
+import org.iban4j.Iban
 import org.junit.jupiter.api.Test
 import java.math.BigDecimal
-import kotlin.test.*
+import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 
 class WithdrawMoneyUseCaseTest {
 
     private val accountRepository = mockk<AccountRepository>()
     private val withdrawMoneyUseCase = WithdrawMoneyUseCase(accountRepository)
+    private val transaction1 = Transaction(id = 1, amount = BigDecimal(50), operation = Operation.DEPOSIT)
+    private val transaction2 = Transaction(id = 2, amount = BigDecimal(80), operation = Operation.DEPOSIT)
+    private val transaction3 = Transaction(id = 3, amount = BigDecimal(-80), operation = Operation.WITHDRAWAL)
     private val account = Account(
-        id = 1,
-        firstName = "Pierre",
-        lastName = "Guyard",
+        iban = Iban.random().toString(),
+        firstName = "John",
+        lastName = "Doe",
         balance = BigDecimal(500),
-        transactions = mutableListOf(BigDecimal(50), BigDecimal(20), BigDecimal(-15))
+        transactions = mutableListOf(transaction1, transaction2, transaction3)
     )
 
     @Test
-    fun testWithdrawMoney() {
+    fun `Retrait d'un montant sur un compte, diminution du solde`() {
 
-        every { accountRepository.findById(1) } returns account
-        every { accountRepository.save(any()) } just Runs
+        every { accountRepository.consultAccount(account.iban) } returns account
+        every { accountRepository.saveAccount(any()) } just Runs
 
-        val updatedAccount = withdrawMoneyUseCase.withdrawMoney(1, BigDecimal(50))
-        verify { accountRepository.save(updatedAccount) }
+        val updatedAccount = withdrawMoneyUseCase.withdrawMoney(account.iban, BigDecimal(50))
+        verify { accountRepository.saveAccount(updatedAccount) }
 
         assertEquals(BigDecimal(450), updatedAccount.balance)
+        verify { accountRepository.consultAccount(account.iban) }
+        verify { accountRepository.saveAccount(any()) }
     }
 
     @Test
-    fun testIfAccountNotFoundThrowException() {
+    fun `Mise a jour de la liste des transactions du compte`() {
 
-        every { accountRepository.findById(1) } returns null
+        every { accountRepository.consultAccount(account.iban) } returns account
+        every { accountRepository.saveAccount(any()) } just Runs
 
-        assertFailsWith<IllegalArgumentException> {
-            withdrawMoneyUseCase.withdrawMoney(1, BigDecimal(50))
+        val updatedAccount = withdrawMoneyUseCase.withdrawMoney(account.iban, BigDecimal(50))
+        verify { accountRepository.saveAccount(updatedAccount) }
+
+        val viewTransactionsUseCase = ViewTransactionsUseCase(accountRepository)
+        val previousTransactions = viewTransactionsUseCase.getTransactions(account.iban)
+        val transaction = Transaction(id = 0, amount = BigDecimal(-50), operation = Operation.WITHDRAWAL)
+
+        assertEquals(4, previousTransactions.size)
+        assertEquals(transaction, previousTransactions[3])
+        verify { accountRepository.consultAccount(account.iban) }
+        verify { accountRepository.saveAccount(any()) }
+    }
+
+    @Test
+    fun `Lorsque le numero du compte n'existe pas, alors la transaction echoue avec une InvalidIbanException`() {
+
+        every { accountRepository.consultAccount(account.iban) } returns null
+
+        assertFailsWith<InvalidIbanException> {
+            withdrawMoneyUseCase.withdrawMoney(account.iban, BigDecimal(50))
         }
     }
 
     @Test
-    fun testIfInvalidAmountToWithdrawThrowException() {
+    fun `Lorsque le montant depose n'est pas valide, alors la transaction echoue avec une InvalidAmountToWithdrawException`() {
 
-        every { accountRepository.findById(1) } returns account
-        every { accountRepository.save(any()) } just Runs
+        every { accountRepository.consultAccount(account.iban) } returns account
+        every { accountRepository.saveAccount(any()) } just Runs
 
-        assertFailsWith<IllegalArgumentException> {
-            withdrawMoneyUseCase.withdrawMoney(1, BigDecimal(550))
+        assertFailsWith<InvalidAmountToWithdrawException> {
+            withdrawMoneyUseCase.withdrawMoney(account.iban, BigDecimal(550))
         }
     }
 
     @Test
-    fun ifTheBalanceIsEmptyThrowException() {
+    fun `Lorsque le solde est vide, alors la transaction echoue avec une InvalidAmountToDepositException`() {
 
         val account = Account(
-            id = 1,
-            firstName = "Pierre",
-            lastName = "Guyard",
+            iban = Iban.random().toString(),
+            firstName = "John",
+            lastName = "Doe",
             balance = BigDecimal.ZERO,
-            transactions = mutableListOf(BigDecimal(50), BigDecimal(20), BigDecimal(-15))
+            transactions = mutableListOf()
         )
 
-        every { accountRepository.findById(1) } returns account
-        every { accountRepository.save(any()) } just Runs
+        every { accountRepository.consultAccount(account.iban) } returns account
+        every { accountRepository.saveAccount(any()) } just Runs
 
-        assertFailsWith<IllegalArgumentException> {
-            withdrawMoneyUseCase.withdrawMoney(1, BigDecimal(50))
+        assertFailsWith<EmptyBalanceException> {
+            withdrawMoneyUseCase.withdrawMoney(account.iban, BigDecimal(50))
         }
     }
 }
