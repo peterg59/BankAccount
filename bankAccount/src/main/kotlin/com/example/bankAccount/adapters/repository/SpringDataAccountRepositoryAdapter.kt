@@ -13,7 +13,7 @@ open class SpringDataAccountRepositoryAdapter(private val springDataAccountRepos
     AccountRepository {
 
     override fun consultAllAccounts(): List<Account> {
-        val accountList = springDataAccountRepository.findAll().map { accountEntity -> accountEntity.toDomain() }
+        val accountList = springDataAccountRepository.findAll().map { it.toDomain() }
         return accountList
     }
 
@@ -45,7 +45,7 @@ private fun AccountEntity.toDomain(): Account {
         firstName = this.firstName,
         lastName = this.lastName,
         balance = this.balance,
-        transactions = this.transactions.map { transactionEntity -> transactionEntity.toDomain() }.toMutableList()
+        transactions = this.transactions.map { it.toDomain() }.toMutableList()
     )
 }
 
@@ -56,7 +56,7 @@ private fun Account.toEntity(): AccountEntity {
         firstName = this.firstName,
         lastName = this.lastName,
         balance = this.balance,
-        transactions = this.transactions.map { transaction -> transaction.toEntity(this) }
+        transactions = this.transactions.map { it.toEntity(this) }
             .toMutableList()  // Mappage des transactions
     )
     return accountEntity
