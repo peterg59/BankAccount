@@ -14,10 +14,15 @@ import java.math.BigDecimal
 open class DepositMoneyUseCase(private val accountRepository: AccountRepository) {
 
     /**
-     * Dépot d'argent sur un compte bancaire dédié
+     * Dépot d'argent sur un compte bancaire dédié.
+     *
+     * @param iban l'iban du compte bancaire
+     * @param amount le montant déposé
      *
      * @throws InvalidIbanException en cas de compte inexistant
      * @throws InvalidAmountToDepositException en cas de montant invalide
+     *
+     * @return le compte bancaire modifié
      */
     fun depositMoney(iban: String, amount: BigDecimal): Account {
 
@@ -34,7 +39,7 @@ open class DepositMoneyUseCase(private val accountRepository: AccountRepository)
 
         // Update the list of transactions
         updatedAccount.transactions.add(transaction)
-        accountRepository.saveAccount(updatedAccount)
+        accountRepository.updateAccount(updatedAccount)
         return updatedAccount
     }
 }

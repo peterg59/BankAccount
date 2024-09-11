@@ -6,7 +6,7 @@ import com.example.bankAccount.domain.Account
 import com.example.bankAccount.domain.AccountRepository
 import com.example.bankAccount.domain.Transaction
 import org.springframework.stereotype.Repository
-import java.text.SimpleDateFormat
+import java.time.Instant
 
 @Repository
 open class SpringDataAccountRepositoryAdapter(private val springDataAccountRepository: SpringDataAccountRepository) :
@@ -28,7 +28,7 @@ open class SpringDataAccountRepositoryAdapter(private val springDataAccountRepos
         return account
     }
 
-    override fun saveAccount(account: Account) {
+    override fun updateAccount(account: Account) {
         val accountEntity = account.toEntity()
         springDataAccountRepository.save(accountEntity)
     }
@@ -57,7 +57,7 @@ private fun Account.toEntity(): AccountEntity {
         lastName = this.lastName,
         balance = this.balance,
         transactions = this.transactions.map { it.toEntity(this) }
-            .toMutableList()  // Mappage des transactions
+            .toMutableList()
     )
     return accountEntity
 }
@@ -65,13 +65,9 @@ private fun Account.toEntity(): AccountEntity {
 // Mappage de TransactionEntity à Transaction
 private fun TransactionEntity.toDomain(): Transaction {
 
-    // Conversion de Date à String
-    val formatter = SimpleDateFormat("dd-MM-yyyy HH:mm:ss")
-    val dateString = formatter.format(this.date)
-
     return Transaction(
         id = this.id,
-        date = dateString,
+        date = this.date,
         operation = this.operation,
         amount = this.amount
     )
@@ -80,15 +76,11 @@ private fun TransactionEntity.toDomain(): Transaction {
 // Mappage de Transaction à TransactionEntity
 private fun Transaction.toEntity(account: Account): TransactionEntity {
 
-    // Conversion de String à Date
-    val formatter = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
-    val date = formatter.parse(this.date)
-
     return TransactionEntity(
         id = this.id,
-        date = date,
+        date = this.date,
         operation = this.operation,
         amount = this.amount,
-        accountIban = account.iban  // Associer la transaction au compte
+        accountIban = account.iban
     )
 }

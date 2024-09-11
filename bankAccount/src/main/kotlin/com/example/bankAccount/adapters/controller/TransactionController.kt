@@ -28,12 +28,12 @@ class TransactionController(
     ): ResponseEntity<Unit> {
         try {
             depositMoneyUseCase.depositMoney(iban, requestBody.amount)
+            return ResponseEntity(HttpStatus.CREATED)
         } catch (invalidIban: InvalidIbanException) {
             return ResponseEntity.notFound().build()
         } catch (invalidAmountToDeposit: InvalidAmountToDepositException) {
             return ResponseEntity.badRequest().build()
         }
-        return ResponseEntity(HttpStatus.CREATED)
     }
 
     @PostMapping("/withdrawals")
@@ -43,6 +43,7 @@ class TransactionController(
     ): ResponseEntity<Unit> {
         try {
             withdrawMoneyUseCase.withdrawMoney(iban, requestBody.amount)
+            return ResponseEntity(HttpStatus.CREATED)
         } catch (invalidIban: InvalidIbanException) {
             return ResponseEntity.notFound().build()
         } catch (invalidAmountToWithdraw: InvalidAmountToWithdrawException) {
@@ -50,7 +51,6 @@ class TransactionController(
         } catch (emptyBalance: EmptyBalanceException) {
             return ResponseEntity.badRequest().build()
         }
-        return ResponseEntity(HttpStatus.CREATED)
     }
 
     @GetMapping("/transactions")

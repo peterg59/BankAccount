@@ -1,7 +1,7 @@
 package com.example.bankAccount.adapters.repository
 
-import com.example.bankAccount.domain.AccountRepository
 import com.example.bankAccount.domain.Account
+import com.example.bankAccount.domain.AccountRepository
 import java.math.BigDecimal
 
 class InMemoryAccountRepository() : AccountRepository {
@@ -23,7 +23,7 @@ class InMemoryAccountRepository() : AccountRepository {
     }
 
     // Update an account
-    override fun saveAccount(account: Account) {
+    override fun updateAccount(account: Account) {
         mapAccounts[account.iban] = account
     }
 

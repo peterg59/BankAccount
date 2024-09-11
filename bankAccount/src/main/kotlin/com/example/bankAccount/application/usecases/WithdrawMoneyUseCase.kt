@@ -4,17 +4,21 @@ import com.example.bankAccount.domain.*
 import com.example.bankAccount.domain.exception.*
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
-import java.time.LocalDate
 
 @Service
 open class WithdrawMoneyUseCase(private val accountRepository: AccountRepository) {
 
     /**
-     * Retrait d'argent sur un compte dédié
+     * Retrait d'argent sur un compte dédié.
+     *
+     * @param iban l'iban du compte bancaire
+     * @param amount le montant retiré
      *
      * @throws InvalidIbanException en cas de compte inexistant
      * @throws InvalidAmountToWithdrawException en cas de montant invalide
      * @throws EmptyBalanceException en cas de solde vide
+     *
+     * @return le compte bancaire modifié
      */
     fun withdrawMoney(iban: String, amount: BigDecimal): Account {
 
@@ -37,7 +41,7 @@ open class WithdrawMoneyUseCase(private val accountRepository: AccountRepository
 
         // Update the list of transactions
         updatedAccount.transactions.add(transaction)
-        accountRepository.saveAccount(updatedAccount)
+        accountRepository.updateAccount(updatedAccount)
         return updatedAccount
     }
 }

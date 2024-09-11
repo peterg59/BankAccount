@@ -9,7 +9,7 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.example</groupId>
-	<artifactId>bankAccount</artifactId>
+	<artifactId>bankaccount</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>bankAccount</name>
 	<description>Bank account</description>
@@ -19,6 +19,7 @@
 		<mockk.version>1.12.0</mockk.version>
 		<junit.jupiter.version>5.10.3</junit.jupiter.version>
 		<junit.platform.version>1.10.3</junit.platform.version>
+		<jackson.module.kotlin.version>2.17.2</jackson.module.kotlin.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -59,7 +60,7 @@
 		<dependency>
 			<groupId>com.fasterxml.jackson.module</groupId>
 			<artifactId>jackson-module-kotlin</artifactId>
-			<version>2.17.2</version>
+			<version>${jackson.module.kotlin.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.iban4j</groupId>

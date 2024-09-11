@@ -9,9 +9,13 @@ import org.springframework.stereotype.Service
 open class ViewTransactionsUseCase(private val accountRepository: AccountRepository) {
 
     /**
-     * Consultation des transactions d'un compte bancaire
+     * Consultation des transactions d'un compte bancaire.
+     *
+     * @param iban l'iban du compte bancaire
      *
      * @throws InvalidIbanException en cas de compte inexistant
+     *
+     * @return la liste des transactions du compte bancaire
      */
     fun getTransactions(iban: String): List<Transaction> {
         val account = accountRepository.consultAccount(iban)

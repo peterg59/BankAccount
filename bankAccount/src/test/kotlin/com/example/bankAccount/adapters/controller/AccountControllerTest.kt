@@ -28,7 +28,7 @@ class AccountControllerTest {
     )
 
     @Test
-    fun `Ouverture d'un compte bancaire, statut CREATED retourne`() {
+    fun `Ouverture d'un compte bancaire`() {
 
         val newAccount = NewAccount("John", "Doe")
         every { accountManagementUseCase.openAccount(newAccount) } returns account
@@ -41,7 +41,7 @@ class AccountControllerTest {
     }
 
     @Test
-    fun `Consultation d'un compte bancaire, statut OK retourne`() {
+    fun `Consultation d'un compte bancaire`() {
 
         every { accountManagementUseCase.consultAccount(account.iban) } returns account
 
@@ -53,7 +53,7 @@ class AccountControllerTest {
     }
 
     @Test
-    fun `Consultation de tous les comptes bancaires existants, statut OK retourne`() {
+    fun `Consultation de tous les comptes bancaires existants`() {
 
         val account1 = Account(
             iban = Iban.random().toString(),
@@ -89,7 +89,7 @@ class AccountControllerTest {
     }
 
     @Test
-    fun `Consultation d'un compte bancaire inexistant, alors la consultation echoue, statut NOT_FOUND retourne`() {
+    fun `Consultation d'un compte bancaire inexistant, alors la consultation echoue`() {
 
         every { accountManagementUseCase.consultAccount(account.iban) } returns null
 
@@ -99,7 +99,7 @@ class AccountControllerTest {
     }
 
     @Test
-    fun `Fermeture d'un compte bancaire, statut NO_CONTENT retourne`() {
+    fun `Fermeture d'un compte bancaire`() {
 
         every { accountManagementUseCase.consultAccount(account.iban) } returns account
         every { accountManagementUseCase.closeAccount(any()) } just Runs

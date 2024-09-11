@@ -39,7 +39,7 @@ class TransactionControllerTest {
     private val amount = BigDecimal(50)
 
     @Test
-    fun `Deposer un montant sur le compte bancaire, augmentation du solde, statut CREATED retourne`() {
+    fun `Depot d'un montant sur le compte bancaire, augmentation du solde`() {
 
         every { depositMoneyUseCase.depositMoney(any(), any()) } returns account
 
@@ -51,7 +51,7 @@ class TransactionControllerTest {
     }
 
     @Test
-    fun `Retirer un montant du compte bancaire, diminution du solde, statut CREATED retourne`() {
+    fun `Retrait d'un montant du compte bancaire, diminution du solde`() {
 
         every { withdrawMoneyUseCase.withdrawMoney(any(), any()) } returns account
 
@@ -62,7 +62,7 @@ class TransactionControllerTest {
     }
 
     @Test
-    fun `Consulter les transactions du compte bancaire, statut OK retourne`() {
+    fun `Consultation des transactions du compte bancaire`() {
 
         every { viewTransactionsUseCase.getTransactions(any()) } returns account.transactions
 
@@ -73,7 +73,7 @@ class TransactionControllerTest {
     }
 
     @Test
-    fun `Deposer un montant sur un compte inexistant, alors la transaction echoue en renvoyant un statut NOT_FOUND`() {
+    fun `Depot d'un montant sur un compte inexistant, alors la transaction echoue`() {
 
         every { depositMoneyUseCase.depositMoney(any(), any()) } throws InvalidIbanException(account.iban)
 
@@ -83,7 +83,7 @@ class TransactionControllerTest {
     }
 
     @Test
-    fun `Deposer un montant invalide sur un compte bancaire, alors la transaction echoue en renvoyant un statut BAD_REQUEST`() {
+    fun `Depot d'un montant invalide sur un compte bancaire, alors la transaction echoue`() {
 
         val invalidAmount = BigDecimal.ZERO
 
@@ -95,7 +95,7 @@ class TransactionControllerTest {
     }
 
     @Test
-    fun `Retirer un montant d'un compte inexistant, alors la transaction echoue en renvoyant un statut NOT_FOUND`() {
+    fun `Retrait d'un montant d'un compte inexistant, alors la transaction echoue`() {
 
         every { withdrawMoneyUseCase.withdrawMoney(any(), any()) } throws InvalidIbanException(account.iban)
 
@@ -105,7 +105,7 @@ class TransactionControllerTest {
     }
 
     @Test
-    fun `Retirer un montant invalide d'un compte bancaire, alors la transaction echoue en renvoyant un statut BAD_REQUEST`() {
+    fun `Retrait d'un montant invalide sur un compte bancaire, alors la transaction echoue`() {
 
         every { withdrawMoneyUseCase.withdrawMoney(any(), any()) } throws InvalidAmountToWithdrawException(amount)
 
@@ -115,7 +115,7 @@ class TransactionControllerTest {
     }
 
     @Test
-    fun `Retirer un montant sur un solde vide, alors la transaction echoue en renvoyant un statut BAD_REQUEST`() {
+    fun `Retrait d'un montant sur un solde vide, alors la transaction echoue`() {
 
         every { withdrawMoneyUseCase.withdrawMoney(any(), any()) } throws EmptyBalanceException()
 
@@ -125,7 +125,7 @@ class TransactionControllerTest {
     }
 
     @Test
-    fun `Consulter les transactions d'un compte inexistant, alors la consultation echoue en renvoyant un statut NOT_FOUND`() {
+    fun `Consultation des transactions d'un compte inexistant, alors la consultation echoue`() {
 
         every { viewTransactionsUseCase.getTransactions(any()) } throws InvalidIbanException(account.iban)
 

@@ -33,24 +33,24 @@ class WithdrawMoneyUseCaseTest {
     fun `Retrait d'un montant sur un compte, diminution du solde`() {
 
         every { accountRepository.consultAccount(account.iban) } returns account
-        every { accountRepository.saveAccount(any()) } just Runs
+        every { accountRepository.updateAccount(any()) } just Runs
 
         val updatedAccount = withdrawMoneyUseCase.withdrawMoney(account.iban, BigDecimal(50))
-        verify { accountRepository.saveAccount(updatedAccount) }
+        verify { accountRepository.updateAccount(updatedAccount) }
 
         assertEquals(BigDecimal(450), updatedAccount.balance)
         verify { accountRepository.consultAccount(account.iban) }
-        verify { accountRepository.saveAccount(any()) }
+        verify { accountRepository.updateAccount(any()) }
     }
 
     @Test
     fun `Mise a jour de la liste des transactions du compte`() {
 
         every { accountRepository.consultAccount(account.iban) } returns account
-        every { accountRepository.saveAccount(any()) } just Runs
+        every { accountRepository.updateAccount(any()) } just Runs
 
         val updatedAccount = withdrawMoneyUseCase.withdrawMoney(account.iban, BigDecimal(50))
-        verify { accountRepository.saveAccount(updatedAccount) }
+        verify { accountRepository.updateAccount(updatedAccount) }
 
         val viewTransactionsUseCase = ViewTransactionsUseCase(accountRepository)
         val previousTransactions = viewTransactionsUseCase.getTransactions(account.iban)
@@ -59,7 +59,7 @@ class WithdrawMoneyUseCaseTest {
         assertEquals(4, previousTransactions.size)
         assertEquals(transaction, previousTransactions[3])
         verify { accountRepository.consultAccount(account.iban) }
-        verify { accountRepository.saveAccount(any()) }
+        verify { accountRepository.updateAccount(any()) }
     }
 
     @Test
@@ -76,7 +76,7 @@ class WithdrawMoneyUseCaseTest {
     fun `Lorsque le montant depose n'est pas valide, alors la transaction echoue avec une InvalidAmountToWithdrawException`() {
 
         every { accountRepository.consultAccount(account.iban) } returns account
-        every { accountRepository.saveAccount(any()) } just Runs
+        every { accountRepository.updateAccount(any()) } just Runs
 
         assertFailsWith<InvalidAmountToWithdrawException> {
             withdrawMoneyUseCase.withdrawMoney(account.iban, BigDecimal(550))
@@ -95,7 +95,7 @@ class WithdrawMoneyUseCaseTest {
         )
 
         every { accountRepository.consultAccount(account.iban) } returns account
-        every { accountRepository.saveAccount(any()) } just Runs
+        every { accountRepository.updateAccount(any()) } just Runs
 
         assertFailsWith<EmptyBalanceException> {
             withdrawMoneyUseCase.withdrawMoney(account.iban, BigDecimal(50))

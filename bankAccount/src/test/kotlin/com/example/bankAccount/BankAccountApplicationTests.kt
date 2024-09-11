@@ -62,7 +62,7 @@ class BankAccountApplicationTests {
     }
 
     @Test
-    fun `Ouverture d'un compte bancaire, statut CREATED retourne`() {
+    fun `Ouverture d'un compte bancaire`() {
 
         val newAccount = NewAccount("John", "Doe")
         val accountCreated = Account(
@@ -88,7 +88,7 @@ class BankAccountApplicationTests {
     }
 
     @Test
-    fun `Consultation d'un compte bancaire, statut OK retourne`() {
+    fun `Consultation d'un compte bancaire`() {
 
         whenever(accountManagementUseCase.consultAccount(account.iban)).thenReturn(account)
 
@@ -99,7 +99,7 @@ class BankAccountApplicationTests {
     }
 
     @Test
-    fun `Consultation d'un compte bancaire inexistant, statut NOT_FOUND retourne`() {
+    fun `Consultation d'un compte bancaire inexistant, alors la consultation echoue`() {
 
         whenever(accountManagementUseCase.consultAccount(account.iban)).thenReturn(null)
 
@@ -110,7 +110,7 @@ class BankAccountApplicationTests {
     }
 
     @Test
-    fun `Consultation de tous les comptes bancaires existants, statut OK retourne`() {
+    fun `Consultation de tous les comptes bancaires existants`() {
 
         val account1 = Account(
             iban = Iban.random().toString(),
@@ -147,7 +147,7 @@ class BankAccountApplicationTests {
     }
 
     @Test
-    fun `Deposer un montant sur le compte bancaire, statut CREATED retourne`() {
+    fun `Depot d'un montant sur le compte bancaire`() {
 
         val amount = BigDecimal(100.00)
 
@@ -162,7 +162,7 @@ class BankAccountApplicationTests {
 
 
     @Test
-    fun `Deposer un montant avec un IBAN errone, statut NOT_FOUND retourne`() {
+    fun `Depot d'un montant avec un IBAN errone, alors la transaction echoue`() {
 
         val invalidIban = "invalid-iban"
         val amount = BigDecimal(100.00)
@@ -178,7 +178,7 @@ class BankAccountApplicationTests {
     }
 
     @Test
-    fun `Deposer un montant invalide sur un compte bancaire, statut BAD_REQUEST retourne`() {
+    fun `Depot d'un montant invalide sur un compte bancaire, alors la transaction echoue`() {
 
         val invalidAmount = BigDecimal.ZERO
 
@@ -193,7 +193,7 @@ class BankAccountApplicationTests {
     }
 
     @Test
-    fun `Retirer un montant sur le compte bancaire, statut CREATED retourne`() {
+    fun `Retrait d'un montant sur le compte bancaire`() {
 
         val amount = BigDecimal("50.00")
 
@@ -206,7 +206,7 @@ class BankAccountApplicationTests {
     }
 
     @Test
-    fun `Retirer un montant d'un compte inexistant, statut NOT_FOUND retourne`() {
+    fun `Retrait d'un montant d'un compte inexistant, alors la transaction echoue`() {
 
         val invalidIban = "invalid-iban"
         val amount = BigDecimal(100.00)
@@ -222,7 +222,7 @@ class BankAccountApplicationTests {
     }
 
     @Test
-    fun `Retirer un montant sur le compte bancaire sachant que le solde est vide, statut BAD_REQUEST retourne`() {
+    fun `Retrait d'un montant sur le compte bancaire sachant que le solde est vide, alors la transaction echoue`() {
 
         val amount = BigDecimal("50.00")
 
@@ -237,7 +237,7 @@ class BankAccountApplicationTests {
     }
 
     @Test
-    fun `Retirer un montant invalide d'un compte bancaire, statut BAD_REQUEST retourne`() {
+    fun `Retrait d'un montant invalide d'un compte bancaire, alors la transaction echoue`() {
 
         val invalidAmount = BigDecimal.ZERO
 
@@ -252,7 +252,7 @@ class BankAccountApplicationTests {
     }
 
     @Test
-    fun `Consulter les transactions du compte bancaire, statut OK retourne`() {
+    fun `Consultation des transactions du compte bancaire`() {
 
         whenever(viewTransactionsUseCase.getTransactions(account.iban)).thenReturn(account.transactions)
 
@@ -264,7 +264,7 @@ class BankAccountApplicationTests {
     }
 
     @Test
-    fun `Consulter les transactions d'un compte inexistant, alors la consultation echoue en renvoyant un statut NOT_FOUND`() {
+    fun `Consultation des transactions d'un compte inexistant, alors la consultation echoue`() {
 
         val invalidIban = "invalid-iban"
 
@@ -279,7 +279,7 @@ class BankAccountApplicationTests {
     }
 
     @Test
-    fun `Fermeture d'un compte bancaire, statut NO_CONTENT retourne`() {
+    fun `Fermeture d'un compte bancaire`() {
 
         whenever(accountManagementUseCase.consultAccount(account.iban)).thenReturn(account)
         doNothing().`when`(accountManagementUseCase).closeAccount(account.iban)
