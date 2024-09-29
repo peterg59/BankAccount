@@ -32,24 +32,24 @@ class DepositMoneyUseCaseTest {
     fun `Depot d'un montant sur un compte, augmentation du solde`() {
 
         every { accountRepository.consultAccount(account.iban) } returns account
-        every { accountRepository.updateAccount(any()) } just Runs
+        every { accountRepository.saveAccount(any()) } just Runs
 
         val updatedAccount = depositMoneyUseCase.depositMoney(account.iban, BigDecimal(50))
-        verify { accountRepository.updateAccount(updatedAccount) }
+        verify { accountRepository.saveAccount(updatedAccount) }
 
         assertEquals(BigDecimal(550), updatedAccount.balance)
         verify { accountRepository.consultAccount(account.iban) }
-        verify { accountRepository.updateAccount(any()) }
+        verify { accountRepository.saveAccount(any()) }
     }
 
     @Test
     fun `Mise a jour de la liste des transactions du compte`() {
 
         every { accountRepository.consultAccount(account.iban) } returns account
-        every { accountRepository.updateAccount(any()) } just Runs
+        every { accountRepository.saveAccount(any()) } just Runs
 
         val updatedAccount = depositMoneyUseCase.depositMoney(account.iban, BigDecimal(50))
-        verify { accountRepository.updateAccount(updatedAccount) }
+        verify { accountRepository.saveAccount(updatedAccount) }
 
         val viewTransactionsUseCase = ViewTransactionsUseCase(accountRepository)
         val previousTransactions = viewTransactionsUseCase.getTransactions(account.iban)
@@ -58,7 +58,7 @@ class DepositMoneyUseCaseTest {
         assertEquals(4, previousTransactions.size)
         assertEquals(transaction, previousTransactions[3])
         verify { accountRepository.consultAccount(account.iban) }
-        verify { accountRepository.updateAccount(any()) }
+        verify { accountRepository.saveAccount(any()) }
     }
 
     @Test
@@ -75,7 +75,7 @@ class DepositMoneyUseCaseTest {
     fun `Lorsque le montant depose n'est pas valide, alors la transaction echoue avec une InvalidAmountToDepositException`() {
 
         every { accountRepository.consultAccount(account.iban) } returns account
-        every { accountRepository.updateAccount(any()) } just Runs
+        every { accountRepository.saveAccount(any()) } just Runs
 
         assertFailsWith<InvalidAmountToDepositException> {
             depositMoneyUseCase.depositMoney(account.iban, BigDecimal.ZERO)

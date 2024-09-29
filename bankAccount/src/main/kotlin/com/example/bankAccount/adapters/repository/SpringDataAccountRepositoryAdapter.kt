@@ -7,6 +7,10 @@ import com.example.bankAccount.domain.AccountRepository
 import com.example.bankAccount.domain.Transaction
 import org.springframework.stereotype.Repository
 import java.time.Instant
+import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.ZoneOffset
+import java.time.format.DateTimeFormatter
 
 @Repository
 open class SpringDataAccountRepositoryAdapter(private val springDataAccountRepository: SpringDataAccountRepository) :
@@ -28,7 +32,7 @@ open class SpringDataAccountRepositoryAdapter(private val springDataAccountRepos
         return account
     }
 
-    override fun updateAccount(account: Account) {
+    override fun saveAccount(account: Account) {
         val accountEntity = account.toEntity()
         springDataAccountRepository.save(accountEntity)
     }
@@ -38,7 +42,9 @@ open class SpringDataAccountRepositoryAdapter(private val springDataAccountRepos
     }
 }
 
-// Mappage de AccountEntity à Account
+/**
+ * Mappage de AccountEntity à Account
+ * */
 private fun AccountEntity.toDomain(): Account {
     return Account(
         iban = this.iban,
@@ -49,7 +55,9 @@ private fun AccountEntity.toDomain(): Account {
     )
 }
 
-// Mappage de Account à AccountEntity
+/**
+ * Mappage de Account à AccountEntity
+ */
 private fun Account.toEntity(): AccountEntity {
     val accountEntity = AccountEntity(
         iban = this.iban,
@@ -62,7 +70,9 @@ private fun Account.toEntity(): AccountEntity {
     return accountEntity
 }
 
-// Mappage de TransactionEntity à Transaction
+/**
+ * Mappage de TransactionEntity à Transaction
+ */
 private fun TransactionEntity.toDomain(): Transaction {
 
     return Transaction(
@@ -73,7 +83,9 @@ private fun TransactionEntity.toDomain(): Transaction {
     )
 }
 
-// Mappage de Transaction à TransactionEntity
+/**
+ * Mappage de Transaction à TransactionEntity
+ */
 private fun Transaction.toEntity(account: Account): TransactionEntity {
 
     return TransactionEntity(

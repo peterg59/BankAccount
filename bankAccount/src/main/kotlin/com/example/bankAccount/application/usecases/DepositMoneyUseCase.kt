@@ -39,7 +39,7 @@ open class DepositMoneyUseCase(private val accountRepository: AccountRepository)
 
         // Update the list of transactions
         updatedAccount.transactions.add(transaction)
-        accountRepository.updateAccount(updatedAccount)
+        accountRepository.saveAccount(updatedAccount)
         return updatedAccount
     }
 }
