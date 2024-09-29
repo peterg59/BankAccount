@@ -6,7 +6,6 @@ import com.example.bankAccount.domain.Account
 import com.example.bankAccount.domain.AccountRepository
 import com.example.bankAccount.domain.Transaction
 import org.springframework.stereotype.Repository
-import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.ZoneOffset
@@ -88,9 +87,20 @@ private fun TransactionEntity.toDomain(): Transaction {
  */
 private fun Transaction.toEntity(account: Account): TransactionEntity {
 
+    // Creer un formateur de date avec le format souhaité
+    val dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+
+    // Utiliser le fuseau horaire du système
+    val formatter = dateTimeFormatter.withZone(ZoneId.systemDefault())
+
+    // Formatter la date formattee en Instant
+    val formattedDate = formatter.format(this.date)
+    val localDateTime = LocalDateTime.parse(formattedDate, dateTimeFormatter)
+    val instantFormatted = localDateTime.toInstant(ZoneOffset.UTC)
+
     return TransactionEntity(
         id = this.id,
-        date = this.date,
+        date = instantFormatted,
         operation = this.operation,
         amount = this.amount,
         accountIban = account.iban
