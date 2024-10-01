@@ -121,7 +121,7 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<configuration>
-					<mainClass>com.example.bankAccount.BankAccountApplication</mainClass>
+					<mainClass>com.example.bankAccount.BankAccountApplicationKt</mainClass>
 				</configuration>
 			</plugin>
 
