@@ -8,11 +8,13 @@
 		<version>3.3.2</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
+
 	<groupId>com.example</groupId>
 	<artifactId>bankaccount</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>bankAccount</name>
 	<description>Bank account</description>
+
 	<properties>
 		<java.version>17</java.version>
 		<kotlin.version>1.9.24</kotlin.version>
@@ -117,6 +119,9 @@
 	</dependencies>
 
 	<build>
+		<sourceDirectory>${project.basedir}/src/main/kotlin</sourceDirectory>
+		<testSourceDirectory>${project.basedir}/src/test/kotlin</testSourceDirectory>
+
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
@@ -125,44 +130,42 @@
 					<mainClass>com.example.bankAccount.BankAccountApplication</mainClass>
 				</configuration>
 			</plugin>
+
 			<plugin>
 				<groupId>org.jetbrains.kotlin</groupId>
 				<artifactId>kotlin-maven-plugin</artifactId>
 				<version>${kotlin.version}</version>
+
 				<executions>
 					<execution>
 						<id>compile</id>
-						<phase>compile</phase>
 						<goals>
 							<goal>compile</goal>
 						</goals>
-						<configuration>
-							<sourceDirs>
-								<source>src/main/kotlin</source>
-								<source>target/generated-sources/annotations</source>
-							</sourceDirs>
-						</configuration>
 					</execution>
+
 					<execution>
 						<id>test-compile</id>
-						<phase>test-compile</phase>
 						<goals>
 							<goal>test-compile</goal>
 						</goals>
 					</execution>
 				</executions>
+
 				<configuration>
 					<jvmTarget>${java.version}</jvmTarget>
+					<compilerPlugins>
+						<plugin>jpa</plugin>
+					</compilerPlugins>
 				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.13.0</version>
-				<configuration>
-					<source>${java.version}</source>
-					<target>${java.version}</target>
-				</configuration>
+
+				<dependencies>
+					<dependency>
+						<groupId>org.jetbrains.kotlin</groupId>
+						<artifactId>kotlin-maven-noarg</artifactId>
+						<version>${kotlin.version}</version>
+					</dependency>
+				</dependencies>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -176,31 +179,6 @@
 					</includes>
 				</configuration>
 			</plugin>
-			<plugin>
-				<artifactId>kotlin-maven-plugin</artifactId>
-				<groupId>org.jetbrains.kotlin</groupId>
-				<version>${kotlin.version}</version>
-
-				<configuration>
-					<compilerPlugins>
-						<plugin>jpa</plugin>
-						<plugin>no-arg</plugin>
-					</compilerPlugins>
-
-					<pluginOptions>
-						<option>no-arg:annotation=com.my.Annotation</option>
-					</pluginOptions>
-				</configuration>
-
-				<dependencies>
-					<dependency>
-						<groupId>org.jetbrains.kotlin</groupId>
-						<artifactId>kotlin-maven-noarg</artifactId>
-						<version>${kotlin.version}</version>
-					</dependency>
-				</dependencies>
-			</plugin>
 		</plugins>
 	</build>
-
 </project>
