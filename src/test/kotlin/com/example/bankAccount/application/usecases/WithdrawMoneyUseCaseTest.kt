@@ -11,8 +11,10 @@ import io.mockk.*
 import org.iban4j.Iban
 import org.junit.jupiter.api.Test
 import java.math.BigDecimal
+import java.time.Duration
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
+import kotlin.test.assertTrue
 
 class WithdrawMoneyUseCaseTest {
 
@@ -57,7 +59,11 @@ class WithdrawMoneyUseCaseTest {
         val transaction = Transaction(id = 0, amount = BigDecimal(-50), operation = Operation.WITHDRAWAL)
 
         assertEquals(4, previousTransactions.size)
-        assertEquals(transaction, previousTransactions[3])
+        assertEquals(transaction.id, previousTransactions[3].id)
+        assertEquals(transaction.amount, previousTransactions[3].amount)
+        assertEquals(transaction.operation, previousTransactions[3].operation) 
+        assertTrue(Duration.between(transaction.date, previousTransactions[3].date).abs().toMillis() < 1000)
+
         verify { accountRepository.consultAccount(account.iban) }
         verify { accountRepository.saveAccount(any()) }
     }
