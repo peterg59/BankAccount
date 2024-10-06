@@ -46,7 +46,7 @@ private fun AccountEntity.toDomain(): Account {
         firstName = this.firstName,
         lastName = this.lastName,
         balance = this.balance,
-        transactions = this.transactions.map { it.toDomain() }.toMutableList()
+        transactions = this.transactions.mapTo(mutableListOf()) { it.toDomain() }
     )
 }
 
@@ -59,8 +59,8 @@ private fun Account.toEntity(): AccountEntity {
         firstName = this.firstName,
         lastName = this.lastName,
         balance = this.balance,
-        transactions = this.transactions.map { it.toEntity(this) }
-            .toMutableList()
+        transactions = this.transactions.mapTo(mutableListOf()) { it.toEntity(this) }
+
     )
     return accountEntity
 }
