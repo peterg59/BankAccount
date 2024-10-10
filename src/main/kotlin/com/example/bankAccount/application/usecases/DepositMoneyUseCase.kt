@@ -33,12 +33,10 @@ open class DepositMoneyUseCase(private val accountRepository: AccountRepository)
             throw InvalidAmountToDepositException(amount)
         }
 
-        // Update the balance with the amount deposited
-        val updatedAccount = account.copy(balance = account.balance + amount)
+        // Update the balance with the amount deposited and the list of transactions too
         val transaction = Transaction(id = 0L, operation = Operation.DEPOSIT, amount = amount)
+        val updatedAccount = account.copy(balance = account.balance + amount, transactions = account.transactions + transaction)
 
-        // Update the list of transactions
-        updatedAccount.transactions.add(transaction)
         accountRepository.saveAccount(updatedAccount)
         return updatedAccount
     }

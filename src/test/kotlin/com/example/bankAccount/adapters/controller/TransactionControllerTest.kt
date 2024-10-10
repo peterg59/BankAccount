@@ -26,15 +26,16 @@ class TransactionControllerTest {
     private val viewTransactionsUseCase = mockk<ViewTransactionsUseCase>()
     private val transactionController =
         TransactionController(depositMoneyUseCase, withdrawMoneyUseCase, viewTransactionsUseCase)
-    private val transaction1 = Transaction(id = 1, amount = BigDecimal(50), operation = Operation.DEPOSIT)
-    private val transaction2 = Transaction(id = 2, amount = BigDecimal(80), operation = Operation.DEPOSIT)
-    private val transaction3 = Transaction(id = 3, amount = BigDecimal(-80), operation = Operation.WITHDRAWAL)
     private val account = Account(
         iban = Iban.random().toString(),
         firstName = "John",
         lastName = "Doe",
         balance = BigDecimal(500),
-        transactions = mutableListOf(transaction1, transaction2, transaction3)
+        transactions = mutableListOf(
+            Transaction(id = 1, amount = BigDecimal(50), operation = Operation.DEPOSIT),
+            Transaction(id = 2, amount = BigDecimal(80), operation = Operation.DEPOSIT),
+            Transaction(id = 3, amount = BigDecimal(-80), operation = Operation.WITHDRAWAL)
+        )
     )
     private val amount = BigDecimal(50)
 

@@ -22,9 +22,6 @@ class InMemoryAccountRepository() : AccountRepository {
         return accountOpened
     }
 
-    /**
-     * Mis à jour du compte
-     * */
     override fun saveAccount(account: Account) {
         mapAccounts[account.iban] = account
     }

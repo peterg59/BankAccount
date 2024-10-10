@@ -35,12 +35,10 @@ open class WithdrawMoneyUseCase(private val accountRepository: AccountRepository
             throw InvalidAmountToWithdrawException(amount)
         }
 
-        // Update the balance with the amount withdrawal
-        val updatedAccount = account.copy(balance = account.balance - amount)
+        // Update the balance with the amount withdrawal and the list of transactions too
         val transaction = Transaction(id = 0L, operation = Operation.WITHDRAWAL, amount = amount.negate())
+        val updatedAccount = account.copy(balance = account.balance - amount, transactions = account.transactions + transaction)
 
-        // Update the list of transactions
-        updatedAccount.transactions.add(transaction)
         accountRepository.saveAccount(updatedAccount)
         return updatedAccount
     }

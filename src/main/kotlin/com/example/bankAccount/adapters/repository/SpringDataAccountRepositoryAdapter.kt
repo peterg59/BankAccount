@@ -54,22 +54,19 @@ private fun AccountEntity.toDomain(): Account {
  * Mappage de Account à AccountEntity
  */
 private fun Account.toEntity(): AccountEntity {
-    val accountEntity = AccountEntity(
+    return AccountEntity(
         iban = this.iban,
         firstName = this.firstName,
         lastName = this.lastName,
         balance = this.balance,
         transactions = this.transactions.mapTo(mutableListOf()) { it.toEntity(this) }
-
     )
-    return accountEntity
 }
 
 /**
  * Mappage de TransactionEntity à Transaction
  */
 private fun TransactionEntity.toDomain(): Transaction {
-
     return Transaction(
         id = this.id,
         date = this.date,
@@ -82,7 +79,6 @@ private fun TransactionEntity.toDomain(): Transaction {
  * Mappage de Transaction à TransactionEntity
  */
 private fun Transaction.toEntity(account: Account): TransactionEntity {
-
     return TransactionEntity(
         id = this.id,
         date = this.date,

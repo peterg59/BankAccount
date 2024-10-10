@@ -8,24 +8,34 @@ import com.example.bankAccount.domain.exception.InvalidAmountToDepositException
 import com.example.bankAccount.domain.exception.InvalidIbanException
 import io.mockk.*
 import org.iban4j.Iban
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import java.math.BigDecimal
-import java.time.Duration
-import kotlin.test.*
+import java.time.Clock
+import java.time.Instant
+import java.time.InstantSource
+import java.time.ZoneOffset
+import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 
 class DepositMoneyUseCaseTest {
 
     private val accountRepository = mockk<AccountRepository>()
     private val depositMoneyUseCase = DepositMoneyUseCase(accountRepository)
-    private val transaction1 = Transaction(id = 1, amount = BigDecimal(50), operation = Operation.DEPOSIT)
-    private val transaction2 = Transaction(id = 2, amount = BigDecimal(80), operation = Operation.DEPOSIT)
-    private val transaction3 = Transaction(id = 3, amount = BigDecimal(-80), operation = Operation.WITHDRAWAL)
+    private val fixedInstant = Instant.parse("2024-10-10T12:00:00Z")
+    private val fixedInstantSource = InstantSource.fixed(fixedInstant)
+    private val clock = Clock.fixed(fixedInstantSource.instant(), ZoneOffset.UTC)
+    private val instant = Instant.now(clock)
     private val account = Account(
         iban = Iban.random().toString(),
         firstName = "John",
         lastName = "Doe",
         balance = BigDecimal(500),
-        transactions = mutableListOf(transaction1, transaction2, transaction3)
+        transactions = mutableListOf(
+            Transaction(id = 1, amount = BigDecimal(50), operation = Operation.DEPOSIT, date = instant),
+            Transaction(id = 2, amount = BigDecimal(80), operation = Operation.DEPOSIT, date = instant),
+            Transaction(id = 3, amount = BigDecimal(-80), operation = Operation.WITHDRAWAL, date = instant)
+        )
     )
 
     @Test
@@ -52,14 +62,20 @@ class DepositMoneyUseCaseTest {
         verify { accountRepository.saveAccount(updatedAccount) }
 
         val viewTransactionsUseCase = ViewTransactionsUseCase(accountRepository)
-        val previousTransactions = viewTransactionsUseCase.getTransactions(account.iban)
-        val transaction = Transaction(id = 0, amount = BigDecimal(50), operation = Operation.DEPOSIT)
+        val transactions = viewTransactionsUseCase.getTransactions(account.iban)
+        val transaction =
+            Transaction(
+                id = 0L,
+                amount = BigDecimal(50),
+                operation = Operation.DEPOSIT,
+                date = fixedInstant
+            )
 
-        assertEquals(4, previousTransactions.size)
-        assertEquals(transaction.id, previousTransactions[3].id)
-        assertEquals(transaction.amount, previousTransactions[3].amount)
-        assertEquals(transaction.operation, previousTransactions[3].operation)
-        assertTrue(Duration.between(transaction.date, previousTransactions[3].date).abs().toMillis() < 1000)
+        assertEquals(4, transactions.size)
+        assertEquals(transaction.id, transactions[3].id)
+        assertEquals(transaction.amount, transactions[3].amount)
+        assertEquals(transaction.operation, transactions[3].operation)
+        assertEquals(transaction.date, transactions[3].date)
 
         verify { accountRepository.consultAccount(account.iban) }
         verify { accountRepository.saveAccount(any()) }

@@ -11,6 +11,7 @@ import io.mockk.verify
 import org.iban4j.Iban
 import org.junit.jupiter.api.Test
 import java.math.BigDecimal
+import java.time.Instant
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 
@@ -18,15 +19,17 @@ class ViewTransactionsUseCaseTest {
 
     private val accountRepository = mockk<AccountRepository>()
     private val viewTransactionsUseCase = ViewTransactionsUseCase(accountRepository)
-    private val transaction1 = Transaction(id = 1, amount = BigDecimal(50), operation = Operation.DEPOSIT)
-    private val transaction2 = Transaction(id = 2, amount = BigDecimal(80), operation = Operation.DEPOSIT)
-    private val transaction3 = Transaction(id = 3, amount = BigDecimal(-80), operation = Operation.WITHDRAWAL)
+    private val fixedInstant = Instant.parse("2024-10-05T12:34:56Z")
     private val account = Account(
         iban = Iban.random().toString(),
         firstName = "John",
         lastName = "Doe",
         balance = BigDecimal(500),
-        transactions = mutableListOf(transaction1, transaction2, transaction3)
+        transactions = mutableListOf(
+            Transaction(id = 1, amount = BigDecimal(50), operation = Operation.DEPOSIT, date = fixedInstant),
+            Transaction(id = 2, amount = BigDecimal(80), operation = Operation.DEPOSIT, date = fixedInstant),
+            Transaction(id = 3, amount = BigDecimal(-80), operation = Operation.WITHDRAWAL, date = fixedInstant)
+        )
     )
 
     @Test
@@ -34,12 +37,26 @@ class ViewTransactionsUseCaseTest {
 
         every { accountRepository.consultAccount(account.iban) } returns account
 
+        val resultInstant = Instant.parse("2024-10-05T12:34:56Z")
         val transactions = viewTransactionsUseCase.getTransactions(account.iban)
 
         assertEquals(3, transactions.size)
-        assertEquals(transaction1, transactions[0])
-        assertEquals(transaction2, transactions[1])
-        assertEquals(transaction3, transactions[2])
+        assertEquals(
+            Transaction(id = 1, amount = BigDecimal(50), operation = Operation.DEPOSIT, date = resultInstant),
+            transactions[0]
+        )
+        assertEquals(
+            Transaction(id = 2, amount = BigDecimal(80), operation = Operation.DEPOSIT, date = resultInstant),
+            transactions[1]
+        )
+        assertEquals(
+            Transaction(
+                id = 3,
+                amount = BigDecimal(-80),
+                operation = Operation.WITHDRAWAL,
+                date = resultInstant
+            ), transactions[2]
+        )
         verify { accountRepository.consultAccount(account.iban) }
     }
 

@@ -8,5 +8,5 @@ data class Account(
     val firstName: String,
     val lastName: String,
     val balance: BigDecimal = BigDecimal.ZERO,
-    val transactions: MutableList<Transaction> = ArrayList()
+    val transactions: List<Transaction> = emptyList()
 )

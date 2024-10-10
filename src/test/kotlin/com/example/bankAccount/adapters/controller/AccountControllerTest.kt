@@ -16,15 +16,16 @@ class AccountControllerTest {
 
     private val accountManagementUseCase = mockk<AccountManagementUseCase>()
     private val accountController = AccountController(accountManagementUseCase)
-    private val transaction1 = Transaction(id = 1, amount = BigDecimal(50), operation = Operation.DEPOSIT)
-    private val transaction2 = Transaction(id = 2, amount = BigDecimal(80), operation = Operation.DEPOSIT)
-    private val transaction3 = Transaction(id = 3, amount = BigDecimal(-80), operation = Operation.WITHDRAWAL)
     private val account = Account(
         iban = Iban.random().toString(),
         firstName = "John",
         lastName = "Doe",
         balance = BigDecimal(500),
-        transactions = mutableListOf(transaction1, transaction2, transaction3)
+        transactions = mutableListOf(
+            Transaction(id = 1, amount = BigDecimal(50), operation = Operation.DEPOSIT),
+            Transaction(id = 2, amount = BigDecimal(80), operation = Operation.DEPOSIT),
+            Transaction(id = 3, amount = BigDecimal(-80), operation = Operation.WITHDRAWAL)
+        )
     )
 
     @Test
@@ -55,30 +56,45 @@ class AccountControllerTest {
     @Test
     fun `Consultation de tous les comptes bancaires existants`() {
 
-        val account1 = Account(
-            iban = Iban.random().toString(),
-            firstName = "John",
-            lastName = "Doe",
-            balance = BigDecimal(500),
-            transactions = mutableListOf(transaction1)
+        val accounts = mutableListOf(
+            Account(
+                iban = Iban.random().toString(),
+                firstName = "John",
+                lastName = "Doe",
+                balance = BigDecimal(500),
+                transactions = mutableListOf(
+                    Transaction(
+                        id = 1,
+                        amount = BigDecimal(50),
+                        operation = Operation.DEPOSIT
+                    )
+                )
+            ), Account(
+                iban = Iban.random().toString(),
+                firstName = "Jane",
+                lastName = "Doe",
+                balance = BigDecimal(15000),
+                transactions = mutableListOf(
+                    Transaction(
+                        id = 2,
+                        amount = BigDecimal(80),
+                        operation = Operation.DEPOSIT
+                    )
+                )
+            ), Account(
+                iban = Iban.random().toString(),
+                firstName = "Jean-Claude",
+                lastName = "Bernard",
+                balance = BigDecimal(6500),
+                transactions = mutableListOf(
+                    Transaction(
+                        id = 3,
+                        amount = BigDecimal(-80),
+                        operation = Operation.WITHDRAWAL
+                    )
+                )
+            )
         )
-
-        val account2 = Account(
-            iban = Iban.random().toString(),
-            firstName = "Jane",
-            lastName = "Doe",
-            balance = BigDecimal(15000),
-            transactions = mutableListOf(transaction2)
-        )
-
-        val account3 = Account(
-            iban = Iban.random().toString(),
-            firstName = "Jean-Claude",
-            lastName = "Bernard",
-            balance = BigDecimal(6500),
-            transactions = mutableListOf(transaction3)
-        )
-        val accounts = mutableListOf(account1, account2, account3)
         every { accountManagementUseCase.consultAllAccounts() } returns accounts
 
         val response = accountController.consultAllAccounts()
