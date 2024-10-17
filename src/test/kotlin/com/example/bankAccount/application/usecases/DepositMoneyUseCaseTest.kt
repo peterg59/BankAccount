@@ -10,7 +10,7 @@ import io.mockk.*
 import org.iban4j.Iban
 import org.junit.jupiter.api.Test
 import java.math.BigDecimal
-import java.time.*
+import java.time.Duration
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import kotlin.test.assertTrue
