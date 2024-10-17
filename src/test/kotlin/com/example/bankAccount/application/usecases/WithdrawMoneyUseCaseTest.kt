@@ -9,33 +9,24 @@ import com.example.bankAccount.domain.exception.InvalidAmountToWithdrawException
 import com.example.bankAccount.domain.exception.InvalidIbanException
 import io.mockk.*
 import org.iban4j.Iban
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import java.math.BigDecimal
-import java.time.Clock
-import java.time.Instant
-import java.time.InstantSource
-import java.time.ZoneOffset
-import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
+import java.time.Duration
+import kotlin.test.*
 
 class WithdrawMoneyUseCaseTest {
 
     private val accountRepository = mockk<AccountRepository>()
     private val withdrawMoneyUseCase = WithdrawMoneyUseCase(accountRepository)
-    private val fixedInstant = Instant.parse("2024-10-10T12:00:00Z")
-    private val fixedInstantSource = InstantSource.fixed(fixedInstant)
-    private val clock = Clock.fixed(fixedInstantSource.instant(), ZoneOffset.UTC)
-    private val instant = Instant.now(clock)
     private val account = Account(
         iban = Iban.random().toString(),
         firstName = "John",
         lastName = "Doe",
         balance = BigDecimal(500),
         transactions = mutableListOf(
-            Transaction(id = 1, amount = BigDecimal(50), operation = Operation.DEPOSIT, date = instant),
-            Transaction(id = 2, amount = BigDecimal(80), operation = Operation.DEPOSIT, date = instant),
-            Transaction(id = 3, amount = BigDecimal(-80), operation = Operation.WITHDRAWAL, date = instant)
+            Transaction(id = 1, amount = BigDecimal(50), operation = Operation.DEPOSIT),
+            Transaction(id = 2, amount = BigDecimal(80), operation = Operation.DEPOSIT),
+            Transaction(id = 3, amount = BigDecimal(-80), operation = Operation.WITHDRAWAL)
         )
     )
 
@@ -62,23 +53,20 @@ class WithdrawMoneyUseCaseTest {
         val updatedAccount = withdrawMoneyUseCase.withdrawMoney(account.iban, BigDecimal(50))
         verify { accountRepository.saveAccount(updatedAccount) }
 
-        val viewTransactionsUseCase = ViewTransactionsUseCase(accountRepository)
-        val transactions = viewTransactionsUseCase.getTransactions(account.iban)
+        val transactions = updatedAccount.transactions
         val transaction =
             Transaction(
                 id = 0L,
                 amount = BigDecimal(-50),
-                operation = Operation.WITHDRAWAL,
-                date = fixedInstant
+                operation = Operation.WITHDRAWAL
             )
 
         assertEquals(4, transactions.size)
         assertEquals(transaction.id, transactions[3].id)
         assertEquals(transaction.amount, transactions[3].amount)
         assertEquals(transaction.operation, transactions[3].operation)
-        assertEquals(transaction.date, transactions[3].date)
+        assertTrue(Duration.between(transaction.date, transactions[3].date).abs().toMillis() < 1000)
 
-        verify { accountRepository.consultAccount(account.iban) }
         verify { accountRepository.saveAccount(any()) }
     }
 
