@@ -17,7 +17,7 @@ class InMemoryAccountRepository() : AccountRepository {
     }
 
     override fun openAccount(account: Account): Account {
-        val accountOpened = account.copy(balance = BigDecimal.ZERO, transactions = ArrayList())
+        val accountOpened = account.copy(balance = BigDecimal.ZERO, transactions = emptyList())
         mapAccounts[accountOpened.iban] = accountOpened
         return accountOpened
     }

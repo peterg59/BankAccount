@@ -7,6 +7,6 @@ data class Account(
     val iban: String = Iban.random().toString(),
     val firstName: String,
     val lastName: String,
-    val balance: BigDecimal = BigDecimal.ZERO,
-    val transactions: List<Transaction> = emptyList()
+    val balance: BigDecimal,
+    val transactions: List<Transaction>
 )

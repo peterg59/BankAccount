@@ -6,6 +6,7 @@ import com.example.bankAccount.domain.Account
 import com.example.bankAccount.domain.AccountRepository
 import com.example.bankAccount.domain.Transaction
 import org.springframework.stereotype.Repository
+import java.math.BigDecimal
 
 @Repository
 open class SpringDataAccountRepositoryAdapter(private val springDataAccountRepository: SpringDataAccountRepository) :
@@ -22,9 +23,10 @@ open class SpringDataAccountRepositoryAdapter(private val springDataAccountRepos
     }
 
     override fun openAccount(account: Account): Account {
-        val accountEntity = account.toEntity()
+        val accountOpened = account.copy(balance = BigDecimal.ZERO, transactions = emptyList())
+        val accountEntity = accountOpened.toEntity()
         springDataAccountRepository.save(accountEntity)
-        return account
+        return accountOpened
     }
 
     override fun saveAccount(account: Account) {
