@@ -21,7 +21,7 @@ class AccountControllerTest {
         firstName = "John",
         lastName = "Doe",
         balance = BigDecimal(500),
-        transactions = mutableListOf(
+        transactions = listOf(
             Transaction(id = 1, amount = BigDecimal(50), operation = Operation.DEPOSIT),
             Transaction(id = 2, amount = BigDecimal(80), operation = Operation.DEPOSIT),
             Transaction(id = 3, amount = BigDecimal(-80), operation = Operation.WITHDRAWAL)
@@ -56,13 +56,13 @@ class AccountControllerTest {
     @Test
     fun `Consultation de tous les comptes bancaires existants`() {
 
-        val accounts = mutableListOf(
+        val accounts = listOf(
             Account(
                 iban = Iban.random().toString(),
                 firstName = "John",
                 lastName = "Doe",
                 balance = BigDecimal(500),
-                transactions = mutableListOf(
+                transactions = listOf(
                     Transaction(
                         id = 1,
                         amount = BigDecimal(50),
@@ -74,7 +74,7 @@ class AccountControllerTest {
                 firstName = "Jane",
                 lastName = "Doe",
                 balance = BigDecimal(15000),
-                transactions = mutableListOf(
+                transactions = listOf(
                     Transaction(
                         id = 2,
                         amount = BigDecimal(80),
@@ -86,7 +86,7 @@ class AccountControllerTest {
                 firstName = "Jean-Claude",
                 lastName = "Bernard",
                 balance = BigDecimal(6500),
-                transactions = mutableListOf(
+                transactions = listOf(
                     Transaction(
                         id = 3,
                         amount = BigDecimal(-80),
