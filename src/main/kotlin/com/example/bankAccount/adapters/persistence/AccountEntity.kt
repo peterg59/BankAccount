@@ -17,6 +17,5 @@ data class AccountEntity(
     var balance: BigDecimal,
     @Column(name = "transactions")
     @OneToMany(fetch = FetchType.LAZY, cascade = [CascadeType.ALL], orphanRemoval = true)
-    @JoinColumn(name = "account_iban")
     var transactions: MutableList<TransactionEntity>
 )
