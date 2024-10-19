@@ -5,7 +5,7 @@ import java.time.Instant
 
 data class Transaction(
     val id: Long,
-    val date: Instant = Instant.now(),
+    val date: Instant,
     val operation: Operation,
     val amount: BigDecimal
 )

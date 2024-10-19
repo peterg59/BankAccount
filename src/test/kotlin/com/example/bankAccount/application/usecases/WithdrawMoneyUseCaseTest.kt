@@ -11,24 +11,26 @@ import io.mockk.*
 import org.iban4j.Iban
 import org.junit.jupiter.api.Test
 import java.math.BigDecimal
-import java.time.Duration
+import java.time.Clock
+import java.time.Instant
+import java.time.ZoneOffset
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
-import kotlin.test.assertTrue
 
 class WithdrawMoneyUseCaseTest {
 
     private val accountRepository = mockk<AccountRepository>()
     private val withdrawMoneyUseCase = WithdrawMoneyUseCase(accountRepository)
+    private val date = Clock.systemUTC().instant()
     private val account = Account(
         iban = Iban.random().toString(),
         firstName = "John",
         lastName = "Doe",
         balance = BigDecimal(500),
-        transactions = mutableListOf(
-            Transaction(id = 1, amount = BigDecimal(50), operation = Operation.DEPOSIT),
-            Transaction(id = 2, amount = BigDecimal(80), operation = Operation.DEPOSIT),
-            Transaction(id = 3, amount = BigDecimal(-80), operation = Operation.WITHDRAWAL)
+        transactions = listOf(
+            Transaction(id = 1, amount = BigDecimal(50), operation = Operation.DEPOSIT, date = date),
+            Transaction(id = 2, amount = BigDecimal(80), operation = Operation.DEPOSIT, date = date),
+            Transaction(id = 3, amount = BigDecimal(-80), operation = Operation.WITHDRAWAL, date = date)
         )
     )
 
@@ -38,7 +40,7 @@ class WithdrawMoneyUseCaseTest {
         every { accountRepository.consultAccount(account.iban) } returns account
         every { accountRepository.saveAccount(any()) } just Runs
 
-        val updatedAccount = withdrawMoneyUseCase.withdrawMoney(account.iban, BigDecimal(50))
+        val updatedAccount = withdrawMoneyUseCase.withdrawMoney(account.iban, BigDecimal(50), Clock.systemUTC())
         verify { accountRepository.saveAccount(updatedAccount) }
 
         assertEquals(BigDecimal(450), updatedAccount.balance)
@@ -52,7 +54,11 @@ class WithdrawMoneyUseCaseTest {
         every { accountRepository.consultAccount(account.iban) } returns account
         every { accountRepository.saveAccount(any()) } just Runs
 
-        val updatedAccount = withdrawMoneyUseCase.withdrawMoney(account.iban, BigDecimal(50))
+        // Définir une heure fixe pour le test
+        val fixedInstant = Instant.parse("2024-10-05T12:30:00Z")
+        val clock = Clock.fixed(fixedInstant, ZoneOffset.UTC)
+
+        val updatedAccount = withdrawMoneyUseCase.withdrawMoney(account.iban, BigDecimal(50), clock)
         verify { accountRepository.saveAccount(updatedAccount) }
 
         val transactions = updatedAccount.transactions
@@ -60,14 +66,15 @@ class WithdrawMoneyUseCaseTest {
             Transaction(
                 id = 0L,
                 amount = BigDecimal(-50),
-                operation = Operation.WITHDRAWAL
+                operation = Operation.WITHDRAWAL,
+                date = fixedInstant
             )
 
         assertEquals(4, transactions.size)
-        assertEquals(transaction.id, transactions[3].id)
-        assertEquals(transaction.amount, transactions[3].amount)
-        assertEquals(transaction.operation, transactions[3].operation)
-        assertTrue(Duration.between(transaction.date, transactions[3].date).abs().toMillis() < 1000)
+        assertEquals(transaction.id, transactions.last().id)
+        assertEquals(transaction.amount, transactions.last().amount)
+        assertEquals(transaction.operation, transactions.last().operation)
+        assertEquals(transaction.date, transactions.last().date)
 
         verify { accountRepository.saveAccount(any()) }
     }
@@ -78,7 +85,7 @@ class WithdrawMoneyUseCaseTest {
         every { accountRepository.consultAccount(account.iban) } returns null
 
         assertFailsWith<InvalidIbanException> {
-            withdrawMoneyUseCase.withdrawMoney(account.iban, BigDecimal(50))
+            withdrawMoneyUseCase.withdrawMoney(account.iban, BigDecimal(50), Clock.systemUTC())
         }
     }
 
@@ -89,7 +96,7 @@ class WithdrawMoneyUseCaseTest {
         every { accountRepository.saveAccount(any()) } just Runs
 
         assertFailsWith<InvalidAmountToWithdrawException> {
-            withdrawMoneyUseCase.withdrawMoney(account.iban, BigDecimal(550))
+            withdrawMoneyUseCase.withdrawMoney(account.iban, BigDecimal(550), Clock.systemUTC())
         }
     }
 
@@ -101,14 +108,14 @@ class WithdrawMoneyUseCaseTest {
             firstName = "John",
             lastName = "Doe",
             balance = BigDecimal.ZERO,
-            transactions = mutableListOf()
+            transactions = listOf()
         )
 
         every { accountRepository.consultAccount(account.iban) } returns account
         every { accountRepository.saveAccount(any()) } just Runs
 
         assertFailsWith<EmptyBalanceException> {
-            withdrawMoneyUseCase.withdrawMoney(account.iban, BigDecimal(50))
+            withdrawMoneyUseCase.withdrawMoney(account.iban, BigDecimal(50), Clock.systemUTC())
         }
     }
 }

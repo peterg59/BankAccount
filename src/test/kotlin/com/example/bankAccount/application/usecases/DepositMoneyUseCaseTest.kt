@@ -10,24 +10,26 @@ import io.mockk.*
 import org.iban4j.Iban
 import org.junit.jupiter.api.Test
 import java.math.BigDecimal
-import java.time.Duration
+import java.time.Clock
+import java.time.Instant
+import java.time.ZoneOffset
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
-import kotlin.test.assertTrue
 
 class DepositMoneyUseCaseTest {
 
     private val accountRepository = mockk<AccountRepository>()
     private val depositMoneyUseCase = DepositMoneyUseCase(accountRepository)
+    private val date = Clock.systemUTC().instant()
     private val account = Account(
         iban = Iban.random().toString(),
         firstName = "John",
         lastName = "Doe",
         balance = BigDecimal(500),
-        transactions = mutableListOf(
-            Transaction(id = 1, amount = BigDecimal(50), operation = Operation.DEPOSIT),
-            Transaction(id = 2, amount = BigDecimal(80), operation = Operation.DEPOSIT),
-            Transaction(id = 3, amount = BigDecimal(-80), operation = Operation.WITHDRAWAL)
+        transactions = listOf(
+            Transaction(id = 1, amount = BigDecimal(50), operation = Operation.DEPOSIT, date = date),
+            Transaction(id = 2, amount = BigDecimal(80), operation = Operation.DEPOSIT, date = date),
+            Transaction(id = 3, amount = BigDecimal(-80), operation = Operation.WITHDRAWAL, date = date)
         )
     )
 
@@ -37,7 +39,7 @@ class DepositMoneyUseCaseTest {
         every { accountRepository.consultAccount(account.iban) } returns account
         every { accountRepository.saveAccount(any()) } just Runs
 
-        val updatedAccount = depositMoneyUseCase.depositMoney(account.iban, BigDecimal(50))
+        val updatedAccount = depositMoneyUseCase.depositMoney(account.iban, BigDecimal(50), Clock.systemUTC())
         verify { accountRepository.saveAccount(updatedAccount) }
 
         assertEquals(BigDecimal(550), updatedAccount.balance)
@@ -51,7 +53,11 @@ class DepositMoneyUseCaseTest {
         every { accountRepository.consultAccount(account.iban) } returns account
         every { accountRepository.saveAccount(any()) } just Runs
 
-        val updatedAccount = depositMoneyUseCase.depositMoney(account.iban, BigDecimal(50))
+        // Définir une heure fixe pour le test
+        val fixedInstant = Instant.parse("2024-10-05T12:30:00Z")
+        val clock = Clock.fixed(fixedInstant, ZoneOffset.UTC)
+
+        val updatedAccount = depositMoneyUseCase.depositMoney(account.iban, BigDecimal(50), clock)
         verify { accountRepository.saveAccount(updatedAccount) }
 
         val transactions = updatedAccount.transactions
@@ -59,14 +65,15 @@ class DepositMoneyUseCaseTest {
             Transaction(
                 id = 0L,
                 amount = BigDecimal(50),
-                operation = Operation.DEPOSIT
+                operation = Operation.DEPOSIT,
+                date = fixedInstant
             )
 
         assertEquals(4, transactions.size)
-        assertEquals(transaction.id, transactions[3].id)
-        assertEquals(transaction.amount, transactions[3].amount)
-        assertEquals(transaction.operation, transactions[3].operation)
-        assertTrue(Duration.between(transaction.date, transactions[3].date).abs().toMillis() < 1000)
+        assertEquals(transaction.id, transactions.last().id)
+        assertEquals(transaction.amount, transactions.last().amount)
+        assertEquals(transaction.operation, transactions.last().operation)
+        assertEquals(transaction.date, transactions.last().date)
 
         verify { accountRepository.saveAccount(any()) }
     }
@@ -77,7 +84,7 @@ class DepositMoneyUseCaseTest {
         every { accountRepository.consultAccount(account.iban) } returns null
 
         assertFailsWith<InvalidIbanException> {
-            depositMoneyUseCase.depositMoney(account.iban, BigDecimal(50))
+            depositMoneyUseCase.depositMoney(account.iban, BigDecimal(50), Clock.systemUTC())
         }
     }
 
@@ -88,7 +95,7 @@ class DepositMoneyUseCaseTest {
         every { accountRepository.saveAccount(any()) } just Runs
 
         assertFailsWith<InvalidAmountToDepositException> {
-            depositMoneyUseCase.depositMoney(account.iban, BigDecimal.ZERO)
+            depositMoneyUseCase.depositMoney(account.iban, BigDecimal.ZERO, Clock.systemUTC())
         }
     }
 }

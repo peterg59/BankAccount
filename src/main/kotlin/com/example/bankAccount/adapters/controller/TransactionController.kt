@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import java.math.BigDecimal
+import java.time.Clock
 
 @RestController
 @RequestMapping("accounts/{iban}")
@@ -27,7 +28,7 @@ class TransactionController(
         @RequestBody requestBody: DepositMoneyRequest
     ): ResponseEntity<Unit> {
         try {
-            depositMoneyUseCase.depositMoney(iban, requestBody.amount)
+            depositMoneyUseCase.depositMoney(iban, requestBody.amount, Clock.systemUTC())
             return ResponseEntity(HttpStatus.CREATED)
         } catch (invalidIban: InvalidIbanException) {
             return ResponseEntity.notFound().build()
@@ -42,7 +43,7 @@ class TransactionController(
         @RequestBody requestBody: WithdrawMoneyRequest
     ): ResponseEntity<Unit> {
         try {
-            withdrawMoneyUseCase.withdrawMoney(iban, requestBody.amount)
+            withdrawMoneyUseCase.withdrawMoney(iban, requestBody.amount, Clock.systemUTC())
             return ResponseEntity(HttpStatus.CREATED)
         } catch (invalidIban: InvalidIbanException) {
             return ResponseEntity.notFound().build()

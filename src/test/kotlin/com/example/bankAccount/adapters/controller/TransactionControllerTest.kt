@@ -18,6 +18,7 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.springframework.http.HttpStatus
 import java.math.BigDecimal
+import java.time.Clock
 
 class TransactionControllerTest {
 
@@ -26,15 +27,16 @@ class TransactionControllerTest {
     private val viewTransactionsUseCase = mockk<ViewTransactionsUseCase>()
     private val transactionController =
         TransactionController(depositMoneyUseCase, withdrawMoneyUseCase, viewTransactionsUseCase)
+    private val date = Clock.systemUTC().instant()
     private val account = Account(
         iban = Iban.random().toString(),
         firstName = "John",
         lastName = "Doe",
         balance = BigDecimal(500),
-        transactions = mutableListOf(
-            Transaction(id = 1, amount = BigDecimal(50), operation = Operation.DEPOSIT),
-            Transaction(id = 2, amount = BigDecimal(80), operation = Operation.DEPOSIT),
-            Transaction(id = 3, amount = BigDecimal(-80), operation = Operation.WITHDRAWAL)
+        transactions = listOf(
+            Transaction(id = 1, amount = BigDecimal(50), operation = Operation.DEPOSIT, date = date),
+            Transaction(id = 2, amount = BigDecimal(80), operation = Operation.DEPOSIT, date = date),
+            Transaction(id = 3, amount = BigDecimal(-80), operation = Operation.WITHDRAWAL, date = date)
         )
     )
     private val amount = BigDecimal(50)
@@ -42,24 +44,24 @@ class TransactionControllerTest {
     @Test
     fun `Depot d'un montant sur le compte bancaire, augmentation du solde`() {
 
-        every { depositMoneyUseCase.depositMoney(any(), any()) } returns account
+        every { depositMoneyUseCase.depositMoney(any(), any(), any()) } returns account
 
 
         val response = transactionController.depositMoney(account.iban, DepositMoneyRequest(amount))
 
         assertEquals(HttpStatus.CREATED, response.statusCode)
-        verify { depositMoneyUseCase.depositMoney(account.iban, amount) }
+        verify { depositMoneyUseCase.depositMoney(account.iban, amount, Clock.systemUTC()) }
     }
 
     @Test
     fun `Retrait d'un montant du compte bancaire, diminution du solde`() {
 
-        every { withdrawMoneyUseCase.withdrawMoney(any(), any()) } returns account
+        every { withdrawMoneyUseCase.withdrawMoney(any(), any(), any()) } returns account
 
         val response = transactionController.withdrawMoney(account.iban, WithdrawMoneyRequest(amount))
 
         assertEquals(HttpStatus.CREATED, response.statusCode)
-        verify { withdrawMoneyUseCase.withdrawMoney(account.iban, amount) }
+        verify { withdrawMoneyUseCase.withdrawMoney(account.iban, amount, Clock.systemUTC()) }
     }
 
     @Test
@@ -76,7 +78,7 @@ class TransactionControllerTest {
     @Test
     fun `Depot d'un montant sur un compte inexistant, alors la transaction echoue`() {
 
-        every { depositMoneyUseCase.depositMoney(any(), any()) } throws InvalidIbanException(account.iban)
+        every { depositMoneyUseCase.depositMoney(any(), any(), any()) } throws InvalidIbanException(account.iban)
 
         val response = transactionController.depositMoney(account.iban, DepositMoneyRequest(amount))
 
@@ -88,7 +90,9 @@ class TransactionControllerTest {
 
         val invalidAmount = BigDecimal.ZERO
 
-        every { depositMoneyUseCase.depositMoney(any(), any()) } throws InvalidAmountToDepositException(invalidAmount)
+        every { depositMoneyUseCase.depositMoney(any(), any(), any()) } throws InvalidAmountToDepositException(
+            invalidAmount
+        )
 
         val response = transactionController.depositMoney(account.iban, DepositMoneyRequest(invalidAmount))
 
@@ -98,7 +102,7 @@ class TransactionControllerTest {
     @Test
     fun `Retrait d'un montant d'un compte inexistant, alors la transaction echoue`() {
 
-        every { withdrawMoneyUseCase.withdrawMoney(any(), any()) } throws InvalidIbanException(account.iban)
+        every { withdrawMoneyUseCase.withdrawMoney(any(), any(), any()) } throws InvalidIbanException(account.iban)
 
         val response = transactionController.withdrawMoney(account.iban, WithdrawMoneyRequest(amount))
 
@@ -108,7 +112,13 @@ class TransactionControllerTest {
     @Test
     fun `Retrait d'un montant invalide sur un compte bancaire, alors la transaction echoue`() {
 
-        every { withdrawMoneyUseCase.withdrawMoney(any(), any()) } throws InvalidAmountToWithdrawException(amount)
+        every {
+            withdrawMoneyUseCase.withdrawMoney(
+                any(),
+                any(),
+                any()
+            )
+        } throws InvalidAmountToWithdrawException(amount)
 
         val response = transactionController.withdrawMoney(account.iban, WithdrawMoneyRequest(amount))
 
@@ -118,7 +128,7 @@ class TransactionControllerTest {
     @Test
     fun `Retrait d'un montant sur un solde vide, alors la transaction echoue`() {
 
-        every { withdrawMoneyUseCase.withdrawMoney(any(), any()) } throws EmptyBalanceException()
+        every { withdrawMoneyUseCase.withdrawMoney(any(), any(), any()) } throws EmptyBalanceException()
 
         val response = transactionController.withdrawMoney(account.iban, WithdrawMoneyRequest(amount))
 

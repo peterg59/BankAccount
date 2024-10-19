@@ -8,6 +8,7 @@ import io.mockk.*
 import org.iban4j.Iban
 import org.junit.jupiter.api.Test
 import java.math.BigDecimal
+import java.time.Clock
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
 
@@ -15,15 +16,16 @@ class AccountManagementUseCaseTest {
 
     private val accountRepository = mockk<AccountRepository>()
     private val accountManagementUseCase = AccountManagementUseCase(accountRepository)
+    private val date = Clock.systemUTC().instant()
     private val account = Account(
         iban = Iban.random().toString(),
         firstName = "John",
         lastName = "Doe",
         balance = BigDecimal(500),
-        transactions = mutableListOf(
-            Transaction(id = 1, amount = BigDecimal(50), operation = Operation.DEPOSIT),
-            Transaction(id = 2, amount = BigDecimal(80), operation = Operation.DEPOSIT),
-            Transaction(id = 3, amount = BigDecimal(-80), operation = Operation.WITHDRAWAL)
+        transactions = listOf(
+            Transaction(id = 1, amount = BigDecimal(50), operation = Operation.DEPOSIT, date = date),
+            Transaction(id = 2, amount = BigDecimal(80), operation = Operation.DEPOSIT, date = date),
+            Transaction(id = 3, amount = BigDecimal(-80), operation = Operation.WITHDRAWAL, date = date)
         )
     )
 
@@ -60,25 +62,25 @@ class AccountManagementUseCaseTest {
     @Test
     fun `Consultation de tous les comptes bancaires existants`() {
 
-        val accountList = mutableListOf(
+        val accountList = listOf(
             Account(
                 iban = Iban.random().toString(),
                 firstName = "John",
                 lastName = "Doe",
                 balance = BigDecimal(500),
-                transactions = mutableListOf()
+                transactions = listOf()
             ), Account(
                 iban = Iban.random().toString(),
                 firstName = "Jane",
                 lastName = "Doe",
                 balance = BigDecimal(15000),
-                transactions = mutableListOf()
+                transactions = listOf()
             ), Account(
                 iban = Iban.random().toString(),
                 firstName = "Jean-Claude",
                 lastName = "Bernard",
                 balance = BigDecimal(6500),
-                transactions = mutableListOf()
+                transactions = listOf()
             )
         )
         every { accountRepository.consultAllAccounts() } returns accountList

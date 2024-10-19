@@ -1,9 +1,16 @@
 package com.example.bankAccount.application.usecases
 
-import com.example.bankAccount.domain.*
-import com.example.bankAccount.domain.exception.*
+import com.example.bankAccount.domain.Account
+import com.example.bankAccount.domain.AccountRepository
+import com.example.bankAccount.domain.Operation
+import com.example.bankAccount.domain.Transaction
+import com.example.bankAccount.domain.exception.EmptyBalanceException
+import com.example.bankAccount.domain.exception.InvalidAmountToWithdrawException
+import com.example.bankAccount.domain.exception.InvalidIbanException
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
+import java.time.Clock
+import java.time.Instant
 
 @Service
 open class WithdrawMoneyUseCase(private val accountRepository: AccountRepository) {
@@ -13,6 +20,7 @@ open class WithdrawMoneyUseCase(private val accountRepository: AccountRepository
      *
      * @param iban l'iban du compte bancaire
      * @param amount le montant retiré
+     * @param clock la periode de la transaction
      *
      * @throws InvalidIbanException en cas de compte inexistant
      * @throws InvalidAmountToWithdrawException en cas de montant invalide
@@ -20,7 +28,7 @@ open class WithdrawMoneyUseCase(private val accountRepository: AccountRepository
      *
      * @return le compte bancaire modifié
      */
-    fun withdrawMoney(iban: String, amount: BigDecimal): Account {
+    fun withdrawMoney(iban: String, amount: BigDecimal, clock: Clock): Account {
 
         val account = accountRepository.consultAccount(iban)
             ?: throw InvalidIbanException(iban)
@@ -36,8 +44,14 @@ open class WithdrawMoneyUseCase(private val accountRepository: AccountRepository
         }
 
         // Update the balance with the amount withdrawal and the list of transactions too
-        val transaction = Transaction(id = 0L, operation = Operation.WITHDRAWAL, amount = amount.negate())
-        val updatedAccount = account.copy(balance = account.balance - amount, transactions = account.transactions + transaction)
+        val transaction = Transaction(
+            id = 0L,
+            operation = Operation.WITHDRAWAL,
+            amount = amount.negate(),
+            date = Instant.now(clock)
+        )
+        val updatedAccount =
+            account.copy(balance = account.balance - amount, transactions = account.transactions + transaction)
 
         accountRepository.saveAccount(updatedAccount)
         return updatedAccount

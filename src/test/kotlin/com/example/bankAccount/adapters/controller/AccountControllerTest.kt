@@ -11,20 +11,23 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.springframework.http.HttpStatus
 import java.math.BigDecimal
+import java.time.Clock
+import java.time.Instant
 
 class AccountControllerTest {
 
     private val accountManagementUseCase = mockk<AccountManagementUseCase>()
     private val accountController = AccountController(accountManagementUseCase)
+    private val date = Clock.systemUTC().instant()
     private val account = Account(
         iban = Iban.random().toString(),
         firstName = "John",
         lastName = "Doe",
         balance = BigDecimal(500),
         transactions = listOf(
-            Transaction(id = 1, amount = BigDecimal(50), operation = Operation.DEPOSIT),
-            Transaction(id = 2, amount = BigDecimal(80), operation = Operation.DEPOSIT),
-            Transaction(id = 3, amount = BigDecimal(-80), operation = Operation.WITHDRAWAL)
+            Transaction(id = 1, amount = BigDecimal(50), operation = Operation.DEPOSIT, date = date),
+            Transaction(id = 2, amount = BigDecimal(80), operation = Operation.DEPOSIT, date = date),
+            Transaction(id = 3, amount = BigDecimal(-80), operation = Operation.WITHDRAWAL, date = date)
         )
     )
 
@@ -66,7 +69,8 @@ class AccountControllerTest {
                     Transaction(
                         id = 1,
                         amount = BigDecimal(50),
-                        operation = Operation.DEPOSIT
+                        operation = Operation.DEPOSIT,
+                        date = Instant.now()
                     )
                 )
             ), Account(
@@ -78,7 +82,8 @@ class AccountControllerTest {
                     Transaction(
                         id = 2,
                         amount = BigDecimal(80),
-                        operation = Operation.DEPOSIT
+                        operation = Operation.DEPOSIT,
+                        date = Instant.now()
                     )
                 )
             ), Account(
@@ -90,7 +95,8 @@ class AccountControllerTest {
                     Transaction(
                         id = 3,
                         amount = BigDecimal(-80),
-                        operation = Operation.WITHDRAWAL
+                        operation = Operation.WITHDRAWAL,
+                        date = Instant.now()
                     )
                 )
             )
