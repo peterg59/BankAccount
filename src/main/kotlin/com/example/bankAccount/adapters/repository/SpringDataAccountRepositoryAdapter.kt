@@ -23,10 +23,9 @@ open class SpringDataAccountRepositoryAdapter(private val springDataAccountRepos
     }
 
     override fun openAccount(account: Account): Account {
-        val accountOpened = account.copy(balance = BigDecimal.ZERO, transactions = emptyList())
-        val accountEntity = accountOpened.toEntity()
+        val accountEntity = account.toEntity()
         springDataAccountRepository.save(accountEntity)
-        return accountOpened
+        return account
     }
 
     override fun saveAccount(account: Account) {
