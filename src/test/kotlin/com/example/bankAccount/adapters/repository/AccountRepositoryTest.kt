@@ -14,7 +14,7 @@ class AccountRepositoryTest {
         firstName = "John",
         lastName = "Doe",
         balance = BigDecimal.ZERO,
-        transactions = ArrayList()
+        transactions = emptyList()
     )
 
     @Test

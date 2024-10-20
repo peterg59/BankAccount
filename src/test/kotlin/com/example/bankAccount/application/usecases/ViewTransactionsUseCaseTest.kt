@@ -25,7 +25,7 @@ class ViewTransactionsUseCaseTest {
         firstName = "John",
         lastName = "Doe",
         balance = BigDecimal(500),
-        transactions = mutableListOf(
+        transactions = listOf(
             Transaction(id = 1, amount = BigDecimal(50), operation = Operation.DEPOSIT, date = fixedInstant),
             Transaction(id = 2, amount = BigDecimal(80), operation = Operation.DEPOSIT, date = fixedInstant),
             Transaction(id = 3, amount = BigDecimal(-80), operation = Operation.WITHDRAWAL, date = fixedInstant)
